@@ -1,9 +1,7 @@
 package api2
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 )
 
 type Version struct {
@@ -20,20 +18,8 @@ type VersionData struct {
 const versionBasePath = "/version"
 
 func (c *Client) GetVersion() (*Version, error) {
-	var data Version
+	var data *Version
 	url := fmt.Sprintf(c.BaseURL + versionBasePath)
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	bytes, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(bytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
+	return doGet(c, data, url)
 }

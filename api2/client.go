@@ -2,6 +2,7 @@ package api2
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -43,4 +44,20 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("%s\n%s", resp.Status, body)
 	}
 	return body, nil
+}
+
+func doGet[T any](c *Client, data *T, url string) (*T, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	bytes, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
