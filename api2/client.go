@@ -40,7 +40,7 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("%s", body)
+		return nil, fmt.Errorf("%s\n%s", resp.Status, body)
 	}
 	return body, nil
 }
