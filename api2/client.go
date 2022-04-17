@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type Client struct {
@@ -18,7 +19,7 @@ type Client struct {
 
 func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) *Client {
 	return &Client{
-		BaseURL:     baseURL + "/api2/json",
+		BaseURL:     strings.Trim(baseURL, "/") + "/api2/json",
 		TokenID:     tokenID,
 		Secret:      secret,
 		TLSInsecure: tlsInsecure,
