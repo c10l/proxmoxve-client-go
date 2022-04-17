@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -49,6 +50,22 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 
 func doGet[T any](c *Client, data *T, url string) (*T, error) {
 	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	bytes, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
+	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
 	}
