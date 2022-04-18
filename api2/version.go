@@ -10,8 +10,9 @@ type Version struct {
 const versionBasePath = "/version"
 
 func (c *Client) RetrieveVersion() (*Version, error) {
-	var data *Version
+	data := new(Version)
 	apiURL := *c.ApiURL
 	apiURL.Path += versionBasePath
-	return doGet(c, data, &apiURL)
+	err := doGet(c, data, &apiURL)
+	return data, err
 }

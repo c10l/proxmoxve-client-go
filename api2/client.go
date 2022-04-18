@@ -79,34 +79,34 @@ func callAPI(c *Client, method string, url *url.URL) ([]byte, error) {
 	return resp, nil
 }
 
-func doGet[T any](c *Client, data *T, url *url.URL) (*T, error) {
+func doGet[T any](c *Client, data *T, url *url.URL) error {
 	resp, err := callAPI(c, http.MethodGet, url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	responseData, err := extractDataFromResponse(resp)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if err := json.Unmarshal(responseData, &data); err != nil {
-		return nil, err
+		return err
 	}
-	return data, nil
+	return nil
 }
 
-func doPost[T any](c *Client, data *T, url *url.URL) (*T, error) {
+func doPost[T any](c *Client, data *T, url *url.URL) error {
 	resp, err := callAPI(c, http.MethodPost, url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	responseData, err := extractDataFromResponse(resp)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if err := json.Unmarshal(responseData, &data); err != nil {
-		return nil, err
+		return err
 	}
-	return data, nil
+	return nil
 }
 
 func doDelete(c *Client, url *url.URL) error {
