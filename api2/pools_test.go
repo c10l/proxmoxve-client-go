@@ -16,3 +16,18 @@ func TestPostPoolAndGetPools(t *testing.T) {
 	assert.NoError(t, getPoolsError)
 	assert.Contains(t, *pools, Pool{PoolID: poolID, Comment: comment})
 }
+
+func TestGetPool(t *testing.T) {
+	poolID := rand.String(10)
+	comment := rand.String(20)
+	assert.NoError(t, testClient.PostPool(poolID, comment))
+
+	expected := Pool{
+		PoolID:  poolID,
+		Comment: comment,
+		Members: []any{},
+	}
+	actual, getPoolError := testClient.GetPool(poolID)
+	assert.NoError(t, getPoolError)
+	assert.Equal(t, expected, *actual)
+}
