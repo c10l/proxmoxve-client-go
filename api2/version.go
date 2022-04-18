@@ -5,10 +5,6 @@ import (
 )
 
 type Version struct {
-	Data VersionData
-}
-
-type VersionData struct {
 	Release string `json:"release"`
 	RepoID  string `json:"repoid"`
 	Version string `json:"version"`

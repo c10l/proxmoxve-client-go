@@ -4,9 +4,7 @@ import (
 	"fmt"
 )
 
-type Pools struct {
-	Data []Pool `json:"data"`
-}
+type Pools []Pool
 
 type Pool struct {
 	PoolID  string `json:"poolid"`
@@ -24,7 +22,6 @@ func (c *Client) GetPools() (*Pools, error) {
 
 func (c *Client) PostPools(poolID, comment string) error {
 	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "?poolid=" + poolID + "&comment=" + comment)
-	fmt.Println(url)
 	_, err := doPost(c, new(Pools), url, nil)
 	return err
 }

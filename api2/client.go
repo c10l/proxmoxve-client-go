@@ -18,6 +18,10 @@ type Client struct {
 	HTTPClient  *http.Client
 }
 
+type Response struct {
+	Data any `json:"data"`
+}
+
 func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) *Client {
 	return &Client{
 		BaseURL:     strings.Trim(baseURL, "/") + "/api2/json",
@@ -57,8 +61,15 @@ func doGet[T any](c *Client, data *T, url string) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(bytes, &data)
+	response := new(Response)
+	if err := json.Unmarshal(bytes, response); err != nil {
+		return nil, err
+	}
+	responseData, err := json.Marshal(response.Data)
 	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(responseData, &data); err != nil {
 		return nil, err
 	}
 	return data, nil
@@ -73,8 +84,15 @@ func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(bytes, &data)
+	response := new(Response)
+	if err := json.Unmarshal(bytes, response); err != nil {
+		return nil, err
+	}
+	responseData, err := json.Marshal(response.Data)
 	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(responseData, &data); err != nil {
 		return nil, err
 	}
 	return data, nil
