@@ -61,12 +61,20 @@ func extractDataFromResponse(resp []byte) ([]byte, error) {
 	return json.Marshal(response.Data)
 }
 
-func doGet[T any](c *Client, data *T, url string) (*T, error) {
-	req, err := http.NewRequest("GET", url, nil)
+func callAPI(c *Client, method, url string, body io.Reader) ([]byte, error) {
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
 	resp, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func doGet[T any](c *Client, data *T, url string) (*T, error) {
+	resp, err := callAPI(c, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -81,11 +89,7 @@ func doGet[T any](c *Client, data *T, url string) (*T, error) {
 }
 
 func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
-	req, err := http.NewRequest("POST", url, body)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.doRequest(req)
+	resp, err := callAPI(c, http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
