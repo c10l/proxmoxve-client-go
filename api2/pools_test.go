@@ -1,6 +1,7 @@
 package api2
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,4 +31,12 @@ func TestGetPool(t *testing.T) {
 	actual, getPoolError := testClient.GetPool(poolID)
 	assert.NoError(t, getPoolError)
 	assert.Equal(t, expected, *actual)
+}
+
+func TestDeletePool(t *testing.T) {
+	poolID := rand.String(10)
+	assert.NoError(t, testClient.PostPool(poolID, ""))
+	assert.NoError(t, testClient.DeletePool(poolID))
+	_, getPoolError := testClient.GetPool(poolID)
+	assert.ErrorContains(t, getPoolError, fmt.Sprintf("500 pool '%s' does not exist", poolID))
 }

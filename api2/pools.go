@@ -31,3 +31,8 @@ func (c *Client) GetPool(poolID string) (*Pool, error) {
 	pool := &Pool{PoolID: poolID}
 	return doGet(c, pool, url)
 }
+
+func (c *Client) DeletePool(poolID string) error {
+	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "/" + poolID)
+	return doDelete(c, url)
+}

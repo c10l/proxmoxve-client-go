@@ -102,3 +102,8 @@ func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
 	}
 	return data, nil
 }
+
+func doDelete(c *Client, url string) error {
+	_, err := callAPI(c, http.MethodDelete, url, nil)
+	return err
+}
