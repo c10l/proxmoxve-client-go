@@ -53,20 +53,24 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	return body, nil
 }
 
+func extractDataFromResponse(resp []byte) ([]byte, error) {
+	response := new(Response)
+	if err := json.Unmarshal(resp, response); err != nil {
+		return nil, err
+	}
+	return json.Marshal(response.Data)
+}
+
 func doGet[T any](c *Client, data *T, url string) (*T, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
-	bytes, err := c.doRequest(req)
+	resp, err := c.doRequest(req)
 	if err != nil {
 		return nil, err
 	}
-	response := new(Response)
-	if err := json.Unmarshal(bytes, response); err != nil {
-		return nil, err
-	}
-	responseData, err := json.Marshal(response.Data)
+	responseData, err := extractDataFromResponse(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -81,15 +85,11 @@ func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
-	bytes, err := c.doRequest(req)
+	resp, err := c.doRequest(req)
 	if err != nil {
 		return nil, err
 	}
-	response := new(Response)
-	if err := json.Unmarshal(bytes, response); err != nil {
-		return nil, err
-	}
-	responseData, err := json.Marshal(response.Data)
+	responseData, err := extractDataFromResponse(resp)
 	if err != nil {
 		return nil, err
 	}
