@@ -23,21 +23,22 @@ type Response struct {
 }
 
 func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) *Client {
+	httpClient := new(http.Client)
+	httpClient.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: tlsInsecure},
+	}
 	return &Client{
 		BaseURL:     strings.Trim(baseURL, "/") + "/api2/json",
 		TokenID:     tokenID,
 		Secret:      secret,
 		TLSInsecure: tlsInsecure,
+		HTTPClient:  httpClient,
 	}
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	req.Header.Add("Authorization", fmt.Sprintf("PVEAPIToken=%s=%s", c.TokenID, c.Secret))
-	client := &http.Client{}
-	client.Transport = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: c.TLSInsecure},
-	}
-	resp, err := client.Do(req)
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
