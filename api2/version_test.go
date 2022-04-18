@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetVer(t *testing.T) {
-	version, _ := testClient.GetVersion()
-	assert.GreaterOrEqual(t, version.Release, "7")
+func TestRetrieveVersion(t *testing.T) {
+	actualVersion, _ := testClient.RetrieveVersion()
+	assert.GreaterOrEqual(t, actualVersion.Release, "7")
 }

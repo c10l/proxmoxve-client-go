@@ -8,62 +8,62 @@ import (
 	"k8s.io/apimachinery/pkg/util/rand"
 )
 
-func TestPostPoolAndGetPoolList(t *testing.T) {
+func TestCreatePoolAndRetrievePoolList(t *testing.T) {
 	poolID := rand.String(10)
-	comment := rand.String(20)
-	assert.NoError(t, testClient.PostPool(poolID, comment))
+	expectedComment := rand.String(20)
+	assert.NoError(t, testClient.CreatePool(poolID, expectedComment))
 
-	poolList, getPoolListError := testClient.GetPoolList()
-	assert.NoError(t, getPoolListError)
-	assert.Contains(t, *poolList, Pool{PoolID: poolID, Comment: comment})
+	actualPoolList, retrievePoolListError := testClient.RetrievePoolList()
+	assert.NoError(t, retrievePoolListError)
+	assert.Contains(t, *actualPoolList, Pool{PoolID: poolID, Comment: expectedComment})
 }
 
-func TestGetPool(t *testing.T) {
+func TestRetrievePool(t *testing.T) {
 	poolID := rand.String(10)
-	comment := rand.String(20)
-	assert.NoError(t, testClient.PostPool(poolID, comment))
+	expectedComment := rand.String(20)
+	assert.NoError(t, testClient.CreatePool(poolID, expectedComment))
 
-	expected := Pool{
+	expectedPool := Pool{
 		PoolID:  poolID,
-		Comment: comment,
+		Comment: expectedComment,
 		Members: []any{},
 	}
-	actual, getPoolError := testClient.GetPool(poolID)
-	assert.NoError(t, getPoolError)
-	assert.Equal(t, expected, *actual)
+	actualPool, retrievePoolError := testClient.RetrievePool(poolID)
+	assert.NoError(t, retrievePoolError)
+	assert.Equal(t, expectedPool, *actualPool)
 }
 
 func TestDeletePool(t *testing.T) {
 	poolID := rand.String(10)
-	assert.NoError(t, testClient.PostPool(poolID, ""))
+	assert.NoError(t, testClient.CreatePool(poolID, ""))
 	assert.NoError(t, testClient.DeletePool(poolID))
-	_, getPoolError := testClient.GetPool(poolID)
-	assert.ErrorContains(t, getPoolError, fmt.Sprintf("500 pool '%s' does not exist", poolID))
+	_, retrievePoolError := testClient.RetrievePool(poolID)
+	assert.ErrorContains(t, retrievePoolError, fmt.Sprintf("500 pool '%s' does not exist", poolID))
 }
 
-func TestPutPoolModifyComment(t *testing.T) {
+func TestUpdatePoolComment(t *testing.T) {
 	poolID := rand.String(10)
 	expectedComment := rand.String(20)
-	assert.NoError(t, testClient.PostPool(poolID, ""))
-	assert.NoError(t, testClient.PutPool(poolID, &expectedComment, nil, nil, false))
-	pool, _ := testClient.GetPool(poolID)
-	assert.Equal(t, expectedComment, pool.Comment)
+	assert.NoError(t, testClient.CreatePool(poolID, ""))
+	assert.NoError(t, testClient.UpdatePool(poolID, &expectedComment, nil, nil, false))
+	actualPool, _ := testClient.RetrievePool(poolID)
+	assert.Equal(t, expectedComment, actualPool.Comment)
 }
 
-func TestPutPoolAddAndDeleteStorage(t *testing.T) {
+func TestUpdatePoolAddAndDeleteStorage(t *testing.T) {
 	poolID := rand.String(10)
 	expectedStorage := "local-lvm"
-	assert.NoError(t, testClient.PostPool(poolID, ""))
-	assert.NoError(t, testClient.PutPool(poolID, nil, &[]string{expectedStorage}, nil, false))
-	pool, _ := testClient.GetPool(poolID)
-	members := pool.Members[0].(map[string]any)
-	assert.Equal(t, members["storage"], expectedStorage)
+	assert.NoError(t, testClient.CreatePool(poolID, ""))
+	assert.NoError(t, testClient.UpdatePool(poolID, nil, &[]string{expectedStorage}, nil, false))
+	actualPool, _ := testClient.RetrievePool(poolID)
+	actualMembers := actualPool.Members[0].(map[string]any)
+	assert.Equal(t, actualMembers["storage"], expectedStorage)
 
-	assert.NoError(t, testClient.PutPool(poolID, nil, &[]string{expectedStorage}, nil, true))
-	pool, _ = testClient.GetPool(poolID)
-	assert.Len(t, pool.Members, 0)
+	assert.NoError(t, testClient.UpdatePool(poolID, nil, &[]string{expectedStorage}, nil, true))
+	actualPool, _ = testClient.RetrievePool(poolID)
+	assert.Len(t, actualPool.Members, 0)
 }
 
-func TestPutPoolAddAndDeleteVMs(t *testing.T) {
+func TestUpdatePoolAddAndDeleteVMs(t *testing.T) {
 	// TODO: Needs implementing adding VMs/CTs
 }

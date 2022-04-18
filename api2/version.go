@@ -9,7 +9,7 @@ type Version struct {
 
 const versionBasePath = "/version"
 
-func (c *Client) GetVersion() (*Version, error) {
+func (c *Client) RetrieveVersion() (*Version, error) {
 	var data *Version
 	apiURL := *c.ApiURL
 	apiURL.Path += versionBasePath

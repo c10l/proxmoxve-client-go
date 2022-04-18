@@ -16,14 +16,14 @@ type Pool struct {
 
 const poolsBasePath = "/pools"
 
-func (c *Client) GetPoolList() (*PoolList, error) {
+func (c *Client) RetrievePoolList() (*PoolList, error) {
 	var data *PoolList
 	url := *c.ApiURL
 	url.Path += poolsBasePath
 	return doGet(c, data, &url)
 }
 
-func (c *Client) PostPool(poolID, comment string) error {
+func (c *Client) CreatePool(poolID, comment string) error {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	params := url.Values{}
@@ -34,7 +34,7 @@ func (c *Client) PostPool(poolID, comment string) error {
 	return err
 }
 
-func (c *Client) GetPool(poolID string) (*Pool, error) {
+func (c *Client) RetrievePool(poolID string) (*Pool, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
@@ -49,7 +49,7 @@ func (c *Client) DeletePool(poolID string) error {
 	return doDelete(c, &apiURL)
 }
 
-func (c *Client) PutPool(poolID string, comment *string, storage, vms *[]string, delete bool) error {
+func (c *Client) UpdatePool(poolID string, comment *string, storage, vms *[]string, delete bool) error {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
