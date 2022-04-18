@@ -1,9 +1,5 @@
 package api2
 
-import (
-	"fmt"
-)
-
 type Version struct {
 	Release string `json:"release"`
 	RepoID  string `json:"repoid"`
@@ -15,7 +11,9 @@ const versionBasePath = "/version"
 
 func (c *Client) GetVersion() (*Version, error) {
 	var data *Version
-	url := fmt.Sprintf(c.BaseURL + versionBasePath)
+	// url := fmt.Sprintf(c.BaseURL + versionBasePath)
+	apiURL := *c.ApiURL
+	apiURL.Path += versionBasePath
 
-	return doGet(c, data, url)
+	return doGet(c, data, &apiURL)
 }

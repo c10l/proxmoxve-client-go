@@ -19,10 +19,15 @@ func init() {
 		fmt.Println("  - PROXMOXVE_TEST_SECRET")
 		os.Exit(1)
 	}
-	testClient = NewClient(
+	var err error
+	testClient, err = NewClient(
 		baseURL,
 		tokenID,
 		secret,
 		true,
 	)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

@@ -1,7 +1,7 @@
 package api2
 
 import (
-	"fmt"
+	"net/url"
 )
 
 type Pools []Pool
@@ -16,23 +16,33 @@ const poolsBasePath = "/pools"
 
 func (c *Client) GetPools() (*Pools, error) {
 	var data *Pools
-	url := fmt.Sprintf(c.BaseURL + poolsBasePath)
-	return doGet(c, data, url)
+	url := *c.ApiURL
+	url.Path += poolsBasePath
+	return doGet(c, data, &url)
 }
 
 func (c *Client) PostPool(poolID, comment string) error {
-	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "?poolid=" + poolID + "&comment=" + comment)
-	_, err := doPost(c, new(Pools), url)
+	apiURL := *c.ApiURL
+	apiURL.Path += poolsBasePath
+	params := url.Values{}
+	params.Add("poolid", poolID)
+	params.Add("comment", comment)
+	apiURL.RawQuery = params.Encode()
+	_, err := doPost(c, new(Pools), &apiURL)
 	return err
 }
 
 func (c *Client) GetPool(poolID string) (*Pool, error) {
-	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "/" + poolID)
+	apiURL := *c.ApiURL
+	apiURL.Path += poolsBasePath
+	apiURL.Path += "/" + poolID
 	pool := &Pool{PoolID: poolID}
-	return doGet(c, pool, url)
+	return doGet(c, pool, &apiURL)
 }
 
 func (c *Client) DeletePool(poolID string) error {
-	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "/" + poolID)
-	return doDelete(c, url)
+	apiURL := *c.ApiURL
+	apiURL.Path += poolsBasePath
+	apiURL.Path += "/" + poolID
+	return doDelete(c, &apiURL)
 }

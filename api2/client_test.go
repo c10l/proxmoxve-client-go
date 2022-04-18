@@ -7,9 +7,9 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-	client := NewClient("http://foobar/", "test-token-id", "test-secret", false)
-	assert.Equal(t, client.BaseURL, "http://foobar/api2/json")
-	assert.Equal(t, client.TokenID, "test-token-id")
-	assert.Equal(t, client.Secret, "test-secret")
-	assert.Equal(t, client.TLSInsecure, false)
+	client, _ := NewClient("http://foobar/", "test-token-id", "test-secret", false)
+	assert.Equal(t, "http://foobar/api2/json", client.ApiURL.String())
+	assert.Equal(t, "test-token-id", client.TokenID)
+	assert.Equal(t, "test-secret", client.Secret)
+	assert.Equal(t, false, client.TLSInsecure)
 }

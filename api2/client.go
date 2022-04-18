@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
 type Client struct {
-	BaseURL     string
+	ApiURL      *url.URL
 	TokenID     string
 	Secret      string
 	TLSInsecure bool
@@ -21,18 +22,24 @@ type Response struct {
 	Data any `json:"data"`
 }
 
-func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) *Client {
+func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) (*Client, error) {
 	httpClient := new(http.Client)
 	httpClient.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: tlsInsecure},
 	}
+	apiURL, err := url.Parse(strings.TrimRight(baseURL, "/"))
+	if err != nil {
+		return nil, err
+	}
+	apiURL.Path += "/api2/json"
+
 	return &Client{
-		BaseURL:     strings.Trim(baseURL, "/") + "/api2/json",
+		ApiURL:      apiURL,
 		TokenID:     tokenID,
 		Secret:      secret,
 		TLSInsecure: tlsInsecure,
 		HTTPClient:  httpClient,
-	}
+	}, nil
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
@@ -60,8 +67,8 @@ func extractDataFromResponse(resp []byte) ([]byte, error) {
 	return json.Marshal(response.Data)
 }
 
-func callAPI(c *Client, method, url string) ([]byte, error) {
-	req, err := http.NewRequest(method, url, nil)
+func callAPI(c *Client, method string, url *url.URL) ([]byte, error) {
+	req, err := http.NewRequest(method, url.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +79,7 @@ func callAPI(c *Client, method, url string) ([]byte, error) {
 	return resp, nil
 }
 
-func doGet[T any](c *Client, data *T, url string) (*T, error) {
+func doGet[T any](c *Client, data *T, url *url.URL) (*T, error) {
 	resp, err := callAPI(c, http.MethodGet, url)
 	if err != nil {
 		return nil, err
@@ -87,7 +94,7 @@ func doGet[T any](c *Client, data *T, url string) (*T, error) {
 	return data, nil
 }
 
-func doPost[T any](c *Client, data *T, url string) (*T, error) {
+func doPost[T any](c *Client, data *T, url *url.URL) (*T, error) {
 	resp, err := callAPI(c, http.MethodPost, url)
 	if err != nil {
 		return nil, err
@@ -102,7 +109,12 @@ func doPost[T any](c *Client, data *T, url string) (*T, error) {
 	return data, nil
 }
 
-func doDelete(c *Client, url string) error {
+func doDelete(c *Client, url *url.URL) error {
 	_, err := callAPI(c, http.MethodDelete, url)
+	return err
+}
+
+func doPut(c *Client, url *url.URL) error {
+	_, err := callAPI(c, http.MethodPut, url)
 	return err
 }
