@@ -11,9 +11,7 @@ const versionBasePath = "/version"
 
 func (c *Client) GetVersion() (*Version, error) {
 	var data *Version
-	// url := fmt.Sprintf(c.BaseURL + versionBasePath)
 	apiURL := *c.ApiURL
 	apiURL.Path += versionBasePath
-
 	return doGet(c, data, &apiURL)
 }
