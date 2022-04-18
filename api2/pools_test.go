@@ -8,14 +8,14 @@ import (
 	"k8s.io/apimachinery/pkg/util/rand"
 )
 
-func TestPostPoolAndGetPools(t *testing.T) {
+func TestPostPoolAndGetPoolList(t *testing.T) {
 	poolID := rand.String(10)
 	comment := rand.String(20)
 	assert.NoError(t, testClient.PostPool(poolID, comment))
 
-	pools, getPoolsError := testClient.GetPools()
-	assert.NoError(t, getPoolsError)
-	assert.Contains(t, *pools, Pool{PoolID: poolID, Comment: comment})
+	poolList, getPoolListError := testClient.GetPoolList()
+	assert.NoError(t, getPoolListError)
+	assert.Contains(t, *poolList, Pool{PoolID: poolID, Comment: comment})
 }
 
 func TestGetPool(t *testing.T) {

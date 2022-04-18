@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type Pools []Pool
+type PoolList []Pool
 
 type Pool struct {
 	PoolID  string `json:"poolid"`
@@ -16,8 +16,8 @@ type Pool struct {
 
 const poolsBasePath = "/pools"
 
-func (c *Client) GetPools() (*Pools, error) {
-	var data *Pools
+func (c *Client) GetPoolList() (*PoolList, error) {
+	var data *PoolList
 	url := *c.ApiURL
 	url.Path += poolsBasePath
 	return doGet(c, data, &url)
@@ -30,7 +30,7 @@ func (c *Client) PostPool(poolID, comment string) error {
 	params.Add("poolid", poolID)
 	params.Add("comment", comment)
 	apiURL.RawQuery = params.Encode()
-	_, err := doPost(c, new(Pools), &apiURL)
+	_, err := doPost(c, new(PoolList), &apiURL)
 	return err
 }
 
