@@ -20,7 +20,7 @@ func (c *Client) GetPools() (*Pools, error) {
 	return doGet(c, data, url)
 }
 
-func (c *Client) PostPools(poolID, comment string) error {
+func (c *Client) PostPool(poolID, comment string) error {
 	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "?poolid=" + poolID + "&comment=" + comment)
 	_, err := doPost(c, new(Pools), url, nil)
 	return err
