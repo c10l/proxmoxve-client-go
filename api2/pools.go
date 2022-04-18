@@ -1,7 +1,6 @@
 package api2
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 )
@@ -71,6 +70,5 @@ func (c *Client) UpdatePool(poolID string, comment *string, storage, vms *[]stri
 	}
 	apiURL.RawQuery = params.Encode()
 
-	fmt.Println(apiURL.String())
 	return doPut(c, &apiURL)
 }
