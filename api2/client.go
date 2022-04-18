@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -61,8 +60,8 @@ func extractDataFromResponse(resp []byte) ([]byte, error) {
 	return json.Marshal(response.Data)
 }
 
-func callAPI(c *Client, method, url string, body io.Reader) ([]byte, error) {
-	req, err := http.NewRequest(method, url, body)
+func callAPI(c *Client, method, url string) ([]byte, error) {
+	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +73,7 @@ func callAPI(c *Client, method, url string, body io.Reader) ([]byte, error) {
 }
 
 func doGet[T any](c *Client, data *T, url string) (*T, error) {
-	resp, err := callAPI(c, http.MethodGet, url, nil)
+	resp, err := callAPI(c, http.MethodGet, url)
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +87,8 @@ func doGet[T any](c *Client, data *T, url string) (*T, error) {
 	return data, nil
 }
 
-func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
-	resp, err := callAPI(c, http.MethodPost, url, body)
+func doPost[T any](c *Client, data *T, url string) (*T, error) {
+	resp, err := callAPI(c, http.MethodPost, url)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +103,6 @@ func doPost[T any](c *Client, data *T, url string, body io.Reader) (*T, error) {
 }
 
 func doDelete(c *Client, url string) error {
-	_, err := callAPI(c, http.MethodDelete, url, nil)
+	_, err := callAPI(c, http.MethodDelete, url)
 	return err
 }

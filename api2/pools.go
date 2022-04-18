@@ -22,7 +22,7 @@ func (c *Client) GetPools() (*Pools, error) {
 
 func (c *Client) PostPool(poolID, comment string) error {
 	url := fmt.Sprintf(c.BaseURL + poolsBasePath + "?poolid=" + poolID + "&comment=" + comment)
-	_, err := doPost(c, new(Pools), url, nil)
+	_, err := doPost(c, new(Pools), url)
 	return err
 }
 
