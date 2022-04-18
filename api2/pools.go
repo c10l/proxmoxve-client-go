@@ -1,7 +1,9 @@
 package api2
 
 import (
+	"fmt"
 	"net/url"
+	"strings"
 )
 
 type Pools []Pool
@@ -45,4 +47,30 @@ func (c *Client) DeletePool(poolID string) error {
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
 	return doDelete(c, &apiURL)
+}
+
+func (c *Client) PutPool(poolID string, comment *string, storage, vms *[]string, delete bool) error {
+	apiURL := *c.ApiURL
+	apiURL.Path += poolsBasePath
+	apiURL.Path += "/" + poolID
+
+	params := url.Values{}
+	if comment != nil {
+		params.Add("comment", *comment)
+	}
+	if storage != nil {
+		params.Add("storage", strings.Join(*storage, ","))
+	}
+	if vms != nil {
+		params.Add("vms", strings.Join(*vms, ","))
+	}
+	if storage != nil || vms != nil {
+		if delete {
+			params.Add("delete", "1")
+		}
+	}
+	apiURL.RawQuery = params.Encode()
+
+	fmt.Println(apiURL.String())
+	return doPut(c, &apiURL)
 }

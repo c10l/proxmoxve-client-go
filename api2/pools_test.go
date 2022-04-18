@@ -40,3 +40,30 @@ func TestDeletePool(t *testing.T) {
 	_, getPoolError := testClient.GetPool(poolID)
 	assert.ErrorContains(t, getPoolError, fmt.Sprintf("500 pool '%s' does not exist", poolID))
 }
+
+func TestPutPoolModifyComment(t *testing.T) {
+	poolID := rand.String(10)
+	expectedComment := rand.String(20)
+	assert.NoError(t, testClient.PostPool(poolID, ""))
+	assert.NoError(t, testClient.PutPool(poolID, &expectedComment, nil, nil, false))
+	pool, _ := testClient.GetPool(poolID)
+	assert.Equal(t, expectedComment, pool.Comment)
+}
+
+func TestPutPoolAddAndDeleteStorage(t *testing.T) {
+	poolID := rand.String(10)
+	expectedStorage := "local-lvm"
+	assert.NoError(t, testClient.PostPool(poolID, ""))
+	assert.NoError(t, testClient.PutPool(poolID, nil, &[]string{expectedStorage}, nil, false))
+	pool, _ := testClient.GetPool(poolID)
+	members := pool.Members[0].(map[string]any)
+	assert.Equal(t, members["storage"], expectedStorage)
+
+	assert.NoError(t, testClient.PutPool(poolID, nil, &[]string{expectedStorage}, nil, true))
+	pool, _ = testClient.GetPool(poolID)
+	assert.Len(t, pool.Members, 0)
+}
+
+func TestPutPoolAddAndDeleteVMs(t *testing.T) {
+	// TODO: Needs implementing adding VMs/CTs
+}
