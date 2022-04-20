@@ -189,3 +189,19 @@ func TestPoolUpdateComment(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, expectedComment, pool.Comment)
 }
+
+func TestPoolDelete(t *testing.T) {
+	poolID := rand.String(10)
+
+	err := testClient.CreatePool(poolID, "")
+	assert.NoError(t, err)
+
+	_, err = testClient.RetrievePool(poolID)
+	assert.NoError(t, err)
+
+	err = testClient.DeletePool(poolID)
+	assert.NoError(t, err)
+
+	_, err = testClient.RetrievePool(poolID)
+	assert.ErrorContains(t, err, fmt.Sprintf("500 pool '%s' does not exist", poolID))
+}

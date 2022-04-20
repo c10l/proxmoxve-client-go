@@ -97,14 +97,13 @@ func (c *Client) RetrievePool(poolID string) (*Pool, error) {
 	return &data, err
 }
 
-// func (c *Client) DeletePool(poolID string) (io.Reader, error) {
-// 	apiURL := *c.ApiURL
-// 	apiURL.Path += poolsBasePath
-// 	apiURL.Path += "/" + poolID
-// 	resp, err := doDelete(c, &apiURL)
-// 	data := strings.NewReader(string(resp))
-// 	return data, err
-// }
+func (c *Client) DeletePool(poolID string) error {
+	apiURL := *c.ApiURL
+	apiURL.Path += poolsBasePath
+	apiURL.Path += "/" + poolID
+	_, err := doDelete(c, &apiURL)
+	return err
+}
 
 func (c *Client) UpdatePool(poolID string, comment *string, storageStorages, vmNames []string, delete bool) error {
 	apiURL := *c.ApiURL
