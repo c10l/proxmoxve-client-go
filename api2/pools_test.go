@@ -163,3 +163,29 @@ func TestUnmarshalPoolMembers(t *testing.T) {
 	assert.Equal(t, PoolMemberTypeLXC, pool.Members[1].Type)
 	assert.Equal(t, PoolMemberTypeStorage, pool.Members[2].Type)
 }
+
+func TestPoolCreateAndRetrieve(t *testing.T) {
+	poolID := rand.String(10)
+	expectedComment := rand.String(20)
+	err := testClient.CreatePool(poolID, expectedComment)
+	assert.NoError(t, err)
+
+	pool, err := testClient.RetrievePool(poolID)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedComment, pool.Comment)
+}
+
+func TestPoolUpdateComment(t *testing.T) {
+	poolID := rand.String(10)
+	expectedComment := rand.String(20)
+
+	err := testClient.CreatePool(poolID, expectedComment)
+	assert.NoError(t, err)
+
+	err = testClient.UpdatePool(poolID, &expectedComment, nil, nil, false)
+	assert.NoError(t, err)
+
+	pool, err := testClient.RetrievePool(poolID)
+	assert.NoError(t, err)
+	assert.Equal(t, expectedComment, pool.Comment)
+}

@@ -2,7 +2,6 @@ package api2
 
 import (
 	"encoding/json"
-	"io"
 	"net/url"
 	"strings"
 
@@ -66,67 +65,83 @@ type Pool struct {
 	Members []PoolMember `json:"members"`
 }
 
-func (c *Client) RetrievePoolList() (io.Reader, error) {
-	url := *c.ApiURL
-	url.Path += poolsBasePath
-	resp, err := doGet(c, &url)
-	data := strings.NewReader(string(resp))
-	return data, err
-}
+// func (c *Client) RetrievePoolList() (io.Reader, error) {
+// 	url := *c.ApiURL
+// 	url.Path += poolsBasePath
+// 	resp, err := doGet(c, &url)
+// 	data := strings.NewReader(string(resp))
+// 	return data, err
+// }
 
-func (c *Client) CreatePool(poolID, comment string) (io.Reader, error) {
+func (c *Client) CreatePool(poolID, comment string) error {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	params := url.Values{}
 	params.Add("poolid", poolID)
 	params.Add("comment", comment)
 	apiURL.RawQuery = params.Encode()
-	resp, err := doPost(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
+	_, err := doPost(c, &apiURL) // POST /pool has no response
+	return err
 }
 
-func (c *Client) RetrievePool(poolID string) (io.Reader, error) {
+func (c *Client) RetrievePool(poolID string) (*Pool, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
 	resp, err := doGet(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
+	if err != nil {
+		return nil, err
+	}
+	var data Pool
+	err = json.Unmarshal(resp, &data)
+	return &data, err
 }
 
-func (c *Client) DeletePool(poolID string) (io.Reader, error) {
-	apiURL := *c.ApiURL
-	apiURL.Path += poolsBasePath
-	apiURL.Path += "/" + poolID
-	resp, err := doDelete(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
-}
+// func (c *Client) DeletePool(poolID string) (io.Reader, error) {
+// 	apiURL := *c.ApiURL
+// 	apiURL.Path += poolsBasePath
+// 	apiURL.Path += "/" + poolID
+// 	resp, err := doDelete(c, &apiURL)
+// 	data := strings.NewReader(string(resp))
+// 	return data, err
+// }
 
-func (c *Client) UpdatePool(poolID string, comment *string, storage, vms *[]string, delete bool) (io.Reader, error) {
+func (c *Client) UpdatePool(poolID string, comment *string, storageStorages, vmNames []string, delete bool) error {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
 
 	params := url.Values{}
+	params.Add("poolid", poolID)
 	if comment != nil {
 		params.Add("comment", *comment)
 	}
-	if storage != nil {
-		params.Add("storage", strings.Join(*storage, ","))
+	if len(storageStorages) > 0 {
+		for _, item := range storageStorages {
+			if _, err := (*c).RetrieveStorage(item); err != nil {
+				return err
+			}
+		}
+		storages := strings.Join(storageStorages, ",")
+		params.Add("storage", storages)
 	}
-	if vms != nil {
-		params.Add("vms", strings.Join(*vms, ","))
+	if len(vmNames) > 0 {
+		// TODO: Implement validation after we have RetrieveVMs()
+		// for _, item := range vmNames {
+		// 	if _, err := (*c).RetrieveVM(item); err != nil {
+		// 		return err
+		// 	}
+		// }
+		vmNames := strings.Join(vmNames, ",")
+		params.Add("vms", vmNames)
 	}
-	if storage != nil || vms != nil {
+	if len(storageStorages) > 0 || len(vmNames) > 0 {
 		if delete {
 			params.Add("delete", "1")
 		}
 	}
 	apiURL.RawQuery = params.Encode()
 
-	resp, err := doPut(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
+	_, err := doPut(c, &apiURL)
+	return err
 }
