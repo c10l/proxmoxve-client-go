@@ -2,7 +2,6 @@ package api2
 
 import (
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -16,10 +15,6 @@ type Client struct {
 	Secret      string
 	TLSInsecure bool
 	HTTPClient  *http.Client
-}
-
-type Response struct {
-	Data any `json:"data"`
 }
 
 func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) (*Client, error) {
@@ -65,14 +60,6 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	return body, nil
 }
 
-func extractDataFromResponse(resp []byte) ([]byte, error) {
-	response := new(Response)
-	if err := json.Unmarshal(resp, response); err != nil {
-		return nil, err
-	}
-	return json.Marshal(response.Data)
-}
-
 func callAPI(c *Client, method string, url *url.URL) ([]byte, error) {
 	req, err := http.NewRequest(method, url.String(), nil)
 	if err != nil {
@@ -85,42 +72,26 @@ func callAPI(c *Client, method string, url *url.URL) ([]byte, error) {
 	return resp, nil
 }
 
-func doGet[T any](c *Client, data *T, url *url.URL) ([]byte, error) {
+func doGet(c *Client, url *url.URL) ([]byte, error) {
 	resp, err := callAPI(c, http.MethodGet, url)
 	if err != nil {
-		return nil, err
-	}
-	responseData, err := extractDataFromResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(responseData, &data); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func doPost[T any](c *Client, data *T, url *url.URL) error {
+func doPost(c *Client, url *url.URL) ([]byte, error) {
 	resp, err := callAPI(c, http.MethodPost, url)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	responseData, err := extractDataFromResponse(resp)
-	if err != nil {
-		return err
-	}
-	if err := json.Unmarshal(responseData, &data); err != nil {
-		return err
-	}
-	return nil
+	return resp, nil
 }
 
-func doDelete(c *Client, url *url.URL) error {
-	_, err := callAPI(c, http.MethodDelete, url)
-	return err
+func doDelete(c *Client, url *url.URL) ([]byte, error) {
+	return callAPI(c, http.MethodDelete, url)
 }
 
-func doPut(c *Client, url *url.URL) error {
-	_, err := callAPI(c, http.MethodPut, url)
-	return err
+func doPut(c *Client, url *url.URL) ([]byte, error) {
+	return callAPI(c, http.MethodPut, url)
 }

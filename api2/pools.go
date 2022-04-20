@@ -1,56 +1,52 @@
 package api2
 
 import (
+	"io"
 	"net/url"
 	"strings"
 )
 
-type PoolList []Pool
-
-type Pool struct {
-	PoolID  string `json:"poolid"`
-	Comment string `json:"comment,omitempty"`
-	Members []any  `json:"members,omitempty"`
-}
-
 const poolsBasePath = "/pools"
 
-func (c *Client) RetrievePoolList() (*PoolList, error) {
-	data := new(PoolList)
+func (c *Client) RetrievePoolList() (io.Reader, error) {
 	url := *c.ApiURL
 	url.Path += poolsBasePath
-	err := doGet(c, data, &url)
+	resp, err := doGet(c, &url)
+	data := strings.NewReader(string(resp))
 	return data, err
 }
 
-func (c *Client) CreatePool(poolID, comment string) error {
+func (c *Client) CreatePool(poolID, comment string) (io.Reader, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	params := url.Values{}
 	params.Add("poolid", poolID)
 	params.Add("comment", comment)
 	apiURL.RawQuery = params.Encode()
-	err := doPost(c, new(PoolList), &apiURL)
-	return err
-}
-
-func (c *Client) RetrievePool(poolID string) (*Pool, error) {
-	apiURL := *c.ApiURL
-	apiURL.Path += poolsBasePath
-	apiURL.Path += "/" + poolID
-	data := &Pool{PoolID: poolID}
-	err := doGet(c, data, &apiURL)
+	resp, err := doPost(c, &apiURL)
+	data := strings.NewReader(string(resp))
 	return data, err
 }
 
-func (c *Client) DeletePool(poolID string) error {
+func (c *Client) RetrievePool(poolID string) (io.Reader, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
-	return doDelete(c, &apiURL)
+	resp, err := doGet(c, &apiURL)
+	data := strings.NewReader(string(resp))
+	return data, err
 }
 
-func (c *Client) UpdatePool(poolID string, comment *string, storage, vms *[]string, delete bool) error {
+func (c *Client) DeletePool(poolID string) (io.Reader, error) {
+	apiURL := *c.ApiURL
+	apiURL.Path += poolsBasePath
+	apiURL.Path += "/" + poolID
+	resp, err := doDelete(c, &apiURL)
+	data := strings.NewReader(string(resp))
+	return data, err
+}
+
+func (c *Client) UpdatePool(poolID string, comment *string, storage, vms *[]string, delete bool) (io.Reader, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
@@ -72,5 +68,7 @@ func (c *Client) UpdatePool(poolID string, comment *string, storage, vms *[]stri
 	}
 	apiURL.RawQuery = params.Encode()
 
-	return doPut(c, &apiURL)
+	resp, err := doPut(c, &apiURL)
+	data := strings.NewReader(string(resp))
+	return data, err
 }

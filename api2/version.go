@@ -1,18 +1,16 @@
 package api2
 
-type Version struct {
-	Release string `json:"release"`
-	RepoID  string `json:"repoid"`
-	Version string `json:"version"`
-	Console string `json:"console,omitempty"`
-}
+import (
+	"io"
+	"strings"
+)
 
 const versionBasePath = "/version"
 
-func (c *Client) RetrieveVersion() (*Version, error) {
-	data := new(Version)
+func (c *Client) RetrieveVersion() (io.Reader, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += versionBasePath
-	err := doGet(c, data, &apiURL)
+	resp, err := doGet(c, &apiURL)
+	data := strings.NewReader(string(resp))
 	return data, err
 }
