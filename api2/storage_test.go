@@ -13,20 +13,31 @@ func TestUnmarshalStorage(t *testing.T) {
 	expectedStorage := rand.String(10)
 	storageJSON := []byte(fmt.Sprintf(`
     {
-      "content": "vztmpl,images,rootdir,iso",
-      "disk": 3812077568,
-      "id": "storage/pve/a7ltj8qh7k7",
-      "maxdisk": 8087252992,
-      "node": "pve",
-      "plugintype": "dir",
-      "shared": 0,
-      "status": "available",
+      "content": "%s,%s",
+      "digest": "8391f10ff1f67c76bda33d11a07ca4504cad38be",
+      "path": "/foobar",
       "storage": "%s",
-      "type": "storage"
-    }`, expectedStorage))
+      "type": "dir"
+    }`, StorageContentImages, StorageContentISO, expectedStorage))
 
 	storage := new(Storage)
 	err := json.Unmarshal(storageJSON, storage)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedStorage, storage.Storage)
+	assert.Contains(t, storage.Content, StorageContentImages)
+	assert.Contains(t, storage.Content, StorageContentISO)
+}
+
+func TestStorageCreateAndRetrieve(t *testing.T) {
+	storageStorage := "a" + rand.String(10)
+	actualStorage, err := testClient.CreateStorage(storageStorage, StorageTypeDir, map[string]string{"path": "/foo"})
+	assert.NoError(t, err)
+	assert.Equal(t, storageStorage, actualStorage.Storage)
+	assert.Equal(t, StorageTypeDir, actualStorage.Type)
+
+	storage, err := testClient.RetrieveStorage(storageStorage)
+	assert.NoError(t, err)
+	assert.Equal(t, storageStorage, storage.Storage)
+	assert.Contains(t, storage.Content, StorageContentImages)
+	assert.Contains(t, storage.Content, StorageContentRootDir)
 }

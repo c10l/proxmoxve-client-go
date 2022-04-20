@@ -2,7 +2,7 @@ package api2
 
 import (
 	"bytes"
-	"io"
+	"encoding/json"
 	"net/url"
 	"sort"
 	"strings"
@@ -11,85 +11,113 @@ import (
 const storageBasePath = "/storage"
 
 type Storage struct {
-	Content    StorageContent `json:"content"`
-	Disk       int            `json:"disk"`
-	ID         string         `json:"id"`
-	MaxDisk    int            `json:"maxdisk"`
-	Node       string         `json:"node"`
-	PluginType string         `json:"plugintype"`
-	Shared     int            `json:"shared"`
-	Status     string         `json:"status"`
-	Storage    string         `json:"storage"`
-	Type       string         `json:"type"`
+	Content StorageContentList `json:"content"`
+	Digest  string             `json:"digest"`
+	Path    string             `json:"path"`
+	Storage string             `json:"storage"`
+	Type    StorageType        `json:"type"`
+	Config  json.RawMessage    `json:"config,omitempty"`
 }
 
-type StorageContent []string
+type StorageType string
 
 const (
-	StorageContentVZTMPL  = "vztmpl"
-	StorageContentImages  = "images"
-	StorageContentRootDir = "rootdir"
-	StorageContentISO     = "iso"
+	StorageTypeBTRFS       StorageType = "btrfs"
+	StorageTypeCephFS      StorageType = "cephfs"
+	StorageTypeCIFS        StorageType = "cifs"
+	StorageTypeDir         StorageType = "dir"
+	StorageTypeGlusterFS   StorageType = "glusterfs"
+	StorageTypeiSCSI       StorageType = "iscsi"
+	StorageTypeiSCSIDirect StorageType = "iscsidirect"
+	StorageTypeLVM         StorageType = "lvm"
+	StorageTypeLVMThin     StorageType = "lvmthin"
+	StorageTypeNFS         StorageType = "nfs"
+	StorageTypePBS         StorageType = "pbs"
+	StorageTypeRBD         StorageType = "rbd"
+	StorageTypeZFS         StorageType = "zfs"
+	StorageTypeZFSPool     StorageType = "zfspool"
 )
 
-func (sc *StorageContent) UnmarshalJSON(b []byte) error {
+type StorageContentList []StorageContent
+type StorageContent string
+
+const (
+	StorageContentVZTMPL  StorageContent = "vztmpl"
+	StorageContentImages  StorageContent = "images"
+	StorageContentRootDir StorageContent = "rootdir"
+	StorageContentISO     StorageContent = "iso"
+)
+
+func (scl *StorageContentList) UnmarshalJSON(b []byte) error {
 	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
 	sort.Strings(parts)
-	*sc = parts
+	for _, item := range parts {
+		*scl = append(*scl, StorageContent(item))
+	}
 	return nil
 }
 
-func (c *Client) RetrieveStorageList() (io.Reader, error) {
-	apiURL := *c.ApiURL
-	apiURL.Path += storageBasePath
-	resp, err := doGet(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
-}
+// func (c *Client) RetrieveStorageList() (io.Reader, error) {
+// 	apiURL := *c.ApiURL
+// 	apiURL.Path += storageBasePath
+// 	resp, err := doGet(c, &apiURL)
+// 	data := strings.NewReader(string(resp))
+// 	return data, err
+// }
 
-func (c *Client) RetrieveStorage(storage string) (io.Reader, error) {
+func (c *Client) RetrieveStorage(storage string) (*Storage, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += storageBasePath
 	apiURL.Path += "/" + storage
 	resp, err := doGet(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
+	if err != nil {
+		return nil, err
+	}
+	var data Storage
+	err = json.Unmarshal(resp, &data)
+	return &data, err
 }
 
-func (c *Client) CreateStorage(storage, storageType string, options map[string]string) (io.Reader, error) {
+func (c *Client) CreateStorage(storage string, storageType StorageType, options map[string]string) (*Storage, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += storageBasePath
 	params := url.Values{}
 	params.Add("storage", storage)
-	params.Add("type", storageType)
+	params.Add("type", string(storageType))
 	for k, v := range options {
 		params.Add(k, v)
 	}
 	apiURL.RawQuery = params.Encode()
 	resp, err := doPost(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
-}
-
-func (c *Client) DeleteStorage(storage string) (io.Reader, error) {
-	apiURL := *c.ApiURL
-	apiURL.Path += storageBasePath
-	apiURL.Path += "/" + storage
-	resp, err := doDelete(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
-}
-
-func (c *Client) UpdateStorage(storage string, options map[string]string) (io.Reader, error) {
-	apiURL := *c.ApiURL
-	apiURL.Path += storageBasePath
-	apiURL.Path += "/" + storage
-	params := url.Values{}
-	for k, v := range options {
-		params.Add(k, v)
+	if err != nil {
+		return nil, err
 	}
-	apiURL.RawQuery = params.Encode()
-	resp, err := doPut(c, &apiURL)
-	data := strings.NewReader(string(resp))
-	return data, err
+	var data Storage
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, err
+	}
+	return &data, err
 }
+
+// func (c *Client) DeleteStorage(storage string) (io.Reader, error) {
+// 	apiURL := *c.ApiURL
+// 	apiURL.Path += storageBasePath
+// 	apiURL.Path += "/" + storage
+// 	resp, err := doDelete(c, &apiURL)
+// 	data := strings.NewReader(string(resp))
+// 	return data, err
+// }
+
+// func (c *Client) UpdateStorage(storage string, options map[string]string) (io.Reader, error) {
+// 	apiURL := *c.ApiURL
+// 	apiURL.Path += storageBasePath
+// 	apiURL.Path += "/" + storage
+// 	params := url.Values{}
+// 	for k, v := range options {
+// 		params.Add(k, v)
+// 	}
+// 	apiURL.RawQuery = params.Encode()
+// 	resp, err := doPut(c, &apiURL)
+// 	data := strings.NewReader(string(resp))
+// 	return data, err
+// }
