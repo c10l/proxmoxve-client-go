@@ -99,14 +99,13 @@ func (c *Client) CreateStorage(storage string, storageType StorageType, options 
 	return &data, err
 }
 
-// func (c *Client) DeleteStorage(storage string) (io.Reader, error) {
-// 	apiURL := *c.ApiURL
-// 	apiURL.Path += storageBasePath
-// 	apiURL.Path += "/" + storage
-// 	resp, err := doDelete(c, &apiURL)
-// 	data := strings.NewReader(string(resp))
-// 	return data, err
-// }
+func (c *Client) DeleteStorage(storage string) error {
+	apiURL := *c.ApiURL
+	apiURL.Path += storageBasePath
+	apiURL.Path += "/" + storage
+	_, err := doDelete(c, &apiURL)
+	return err
+}
 
 // func (c *Client) UpdateStorage(storage string, options map[string]string) (io.Reader, error) {
 // 	apiURL := *c.ApiURL

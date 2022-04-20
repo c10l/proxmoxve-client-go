@@ -41,3 +41,19 @@ func TestStorageCreateAndRetrieve(t *testing.T) {
 	assert.Contains(t, storage.Content, StorageContentImages)
 	assert.Contains(t, storage.Content, StorageContentRootDir)
 }
+
+func TestStorageDelete(t *testing.T) {
+	storageStorage := "a" + rand.String(10)
+
+	_, err := testClient.CreateStorage(storageStorage, StorageTypeDir, map[string]string{"path": "/foo"})
+	assert.NoError(t, err)
+
+	_, err = testClient.RetrieveStorage(storageStorage)
+	assert.NoError(t, err)
+
+	err = testClient.DeleteStorage(storageStorage)
+	assert.NoError(t, err)
+
+	_, err = testClient.RetrieveStorage(storageStorage)
+	assert.ErrorContains(t, err, fmt.Sprintf("500 storage '%s' does not exist", storageStorage))
+}
