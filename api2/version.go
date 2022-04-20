@@ -1,16 +1,25 @@
 package api2
 
 import (
-	"io"
-	"strings"
+	"encoding/json"
 )
 
 const versionBasePath = "/version"
 
-func (c *Client) RetrieveVersion() (io.Reader, error) {
+type Version struct {
+	Release string `json:"release"`
+	RepoID  string `json:"repoid"`
+	Version string `json:"version"`
+}
+
+func (c *Client) RetrieveVersion() (*Version, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += versionBasePath
 	resp, err := doGet(c, &apiURL)
-	data := strings.NewReader(string(resp))
+	if err != nil {
+		return nil, err
+	}
+	data := new(Version)
+	err = json.Unmarshal(resp, data)
 	return data, err
 }

@@ -1,12 +1,70 @@
 package api2
 
 import (
+	"encoding/json"
 	"io"
 	"net/url"
 	"strings"
+
+	"github.com/c10l/proxmoxve-client-go/api2/node"
 )
 
 const poolsBasePath = "/pools"
+
+type PoolMemberType string
+
+const (
+	PoolMemberTypeStorage PoolMemberType = "storage"
+	PoolMemberTypeQemu    PoolMemberType = "qemu"
+	PoolMemberTypeLXC     PoolMemberType = "lxc"
+)
+
+type PoolMember struct {
+	Type    PoolMemberType
+	Storage *Storage
+	Qemu    *node.Qemu
+	LXC     *node.LXC
+}
+
+func (pm *PoolMember) UnmarshalJSON(b []byte) error {
+	type poolMemberType struct {
+		Type string `json:"type"`
+	}
+	var pmType poolMemberType
+	if err := json.Unmarshal(b, &pmType); err != nil {
+		return err
+	}
+	switch pmType.Type {
+	case "storage":
+		var storage Storage
+		if err := json.Unmarshal(b, &storage); err != nil {
+			return err
+		}
+		pm.Type = PoolMemberTypeStorage
+		pm.Storage = &storage
+	case "qemu":
+		var qemu node.Qemu
+		if err := json.Unmarshal(b, &qemu); err != nil {
+			return err
+		}
+		pm.Type = PoolMemberTypeQemu
+		pm.Qemu = &qemu
+	case "lxc":
+		var lxc node.LXC
+		if err := json.Unmarshal(b, &lxc); err != nil {
+			return err
+		}
+		pm.Type = PoolMemberTypeLXC
+		pm.LXC = &lxc
+	}
+	return nil
+}
+
+type Pool struct {
+	PoolID  string
+	Comment string       `json:"comment,omitempty"`
+	Members []PoolMember `json:"members"`
+}
 
 func (c *Client) RetrievePoolList() (io.Reader, error) {
 	url := *c.ApiURL

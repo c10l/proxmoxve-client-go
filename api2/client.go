@@ -2,6 +2,7 @@ package api2
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -69,23 +70,26 @@ func callAPI(c *Client, method string, url *url.URL) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return parseData(resp)
+}
+
+func parseData(resp []byte) ([]byte, error) {
+	type responseType struct {
+		Data any `json:"data,omitempty"`
+	}
+	response := responseType{}
+	if err := json.Unmarshal(resp, &response); err != nil {
+		return nil, err
+	}
+	return json.Marshal(response.Data)
 }
 
 func doGet(c *Client, url *url.URL) ([]byte, error) {
-	resp, err := callAPI(c, http.MethodGet, url)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return callAPI(c, http.MethodGet, url)
 }
 
 func doPost(c *Client, url *url.URL) ([]byte, error) {
-	resp, err := callAPI(c, http.MethodPost, url)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return callAPI(c, http.MethodPost, url)
 }
 
 func doDelete(c *Client, url *url.URL) ([]byte, error) {

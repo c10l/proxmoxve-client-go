@@ -1,12 +1,43 @@
 package api2
 
 import (
+	"bytes"
 	"io"
 	"net/url"
+	"sort"
 	"strings"
 )
 
 const storageBasePath = "/storage"
+
+type Storage struct {
+	Content    StorageContent `json:"content"`
+	Disk       int            `json:"disk"`
+	ID         string         `json:"id"`
+	MaxDisk    int            `json:"maxdisk"`
+	Node       string         `json:"node"`
+	PluginType string         `json:"plugintype"`
+	Shared     int            `json:"shared"`
+	Status     string         `json:"status"`
+	Storage    string         `json:"storage"`
+	Type       string         `json:"type"`
+}
+
+type StorageContent []string
+
+const (
+	StorageContentVZTMPL  = "vztmpl"
+	StorageContentImages  = "images"
+	StorageContentRootDir = "rootdir"
+	StorageContentISO     = "iso"
+)
+
+func (sc *StorageContent) UnmarshalJSON(b []byte) error {
+	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
+	sort.Strings(parts)
+	*sc = parts
+	return nil
+}
 
 func (c *Client) RetrieveStorageList() (io.Reader, error) {
 	apiURL := *c.ApiURL
