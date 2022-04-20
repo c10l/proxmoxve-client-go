@@ -33,13 +33,19 @@ func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) (*Client, erro
 	}
 	apiURL.Path += "/api2/json"
 
-	return &Client{
+	client := &Client{
 		ApiURL:      apiURL,
 		TokenID:     tokenID,
 		Secret:      secret,
 		TLSInsecure: tlsInsecure,
 		HTTPClient:  httpClient,
-	}, nil
+	}
+
+	if _, err := client.RetrieveVersion(); err != nil {
+		return nil, err
+	}
+
+	return client, nil
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
@@ -79,19 +85,19 @@ func callAPI(c *Client, method string, url *url.URL) ([]byte, error) {
 	return resp, nil
 }
 
-func doGet[T any](c *Client, data *T, url *url.URL) error {
+func doGet[T any](c *Client, data *T, url *url.URL) ([]byte, error) {
 	resp, err := callAPI(c, http.MethodGet, url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	responseData, err := extractDataFromResponse(resp)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := json.Unmarshal(responseData, &data); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return resp, nil
 }
 
 func doPost[T any](c *Client, data *T, url *url.URL) error {
