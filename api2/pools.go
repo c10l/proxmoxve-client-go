@@ -61,17 +61,25 @@ func (pm *PoolMember) UnmarshalJSON(b []byte) error {
 
 type Pool struct {
 	PoolID  string
-	Comment string       `json:"comment,omitempty"`
-	Members []PoolMember `json:"members"`
+	Comment string        `json:"comment,omitempty"`
+	Members *[]PoolMember `json:"members,omitempty"`
 }
 
-// func (c *Client) RetrievePoolList() (io.Reader, error) {
-// 	url := *c.ApiURL
-// 	url.Path += poolsBasePath
-// 	resp, err := doGet(c, &url)
-// 	data := strings.NewReader(string(resp))
-// 	return data, err
-// }
+type PoolList []Pool
+
+// RetrievePoolList Retrieves a list of pools.
+// **Note that the response DOES NOT include Members!**
+func (c *Client) RetrievePoolList() (PoolList, error) {
+	url := *c.ApiURL
+	url.Path += poolsBasePath
+	resp, err := doGet(c, &url)
+	if err != nil {
+		return nil, err
+	}
+	var data PoolList
+	err = json.Unmarshal(resp, &data)
+	return data, err
+}
 
 func (c *Client) CreatePool(poolID, comment string) error {
 	apiURL := *c.ApiURL

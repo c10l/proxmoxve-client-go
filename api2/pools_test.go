@@ -159,9 +159,9 @@ func TestUnmarshalPoolMembers(t *testing.T) {
 	var pool Pool
 	err := json.Unmarshal(poolJSON, &pool)
 	assert.NoError(t, err)
-	assert.Equal(t, PoolMemberTypeQemu, pool.Members[0].Type)
-	assert.Equal(t, PoolMemberTypeLXC, pool.Members[1].Type)
-	assert.Equal(t, PoolMemberTypeStorage, pool.Members[2].Type)
+	assert.Equal(t, PoolMemberTypeQemu, (*pool.Members)[0].Type)
+	assert.Equal(t, PoolMemberTypeLXC, (*pool.Members)[1].Type)
+	assert.Equal(t, PoolMemberTypeStorage, (*pool.Members)[2].Type)
 }
 
 func TestPoolCreateAndRetrieve(t *testing.T) {
@@ -204,4 +204,19 @@ func TestPoolDelete(t *testing.T) {
 
 	_, err = testClient.RetrievePool(poolID)
 	assert.ErrorContains(t, err, fmt.Sprintf("500 pool '%s' does not exist", poolID))
+}
+
+func TestPoolListRetrieve(t *testing.T) {
+	poolID1 := rand.String(10)
+	poolID2 := rand.String(10)
+
+	err := testClient.CreatePool(poolID1, "")
+	assert.NoError(t, err)
+	err = testClient.CreatePool(poolID2, "")
+	assert.NoError(t, err)
+
+	poolList, err := testClient.RetrievePoolList()
+	assert.NoError(t, err)
+	assert.Contains(t, poolList, Pool{PoolID: poolID1, Comment: ""})
+	assert.Contains(t, poolList, Pool{PoolID: poolID2, Comment: ""})
 }
