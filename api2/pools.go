@@ -10,6 +10,13 @@ import (
 
 const poolsBasePath = "/pools"
 
+type PoolList []Pool
+type Pool struct {
+	PoolID  string
+	Comment string        `json:"comment,omitempty"`
+	Members *[]PoolMember `json:"members,omitempty"`
+}
+
 type PoolMemberType string
 
 const (
@@ -20,7 +27,7 @@ const (
 
 type PoolMember struct {
 	Type    PoolMemberType
-	Storage *Storage
+	Storage *PoolStorage
 	Qemu    *node.Qemu
 	LXC     *node.LXC
 }
@@ -35,7 +42,7 @@ func (pm *PoolMember) UnmarshalJSON(b []byte) error {
 	}
 	switch pmType.Type {
 	case "storage":
-		var storage Storage
+		var storage PoolStorage
 		if err := json.Unmarshal(b, &storage); err != nil {
 			return err
 		}
@@ -59,13 +66,18 @@ func (pm *PoolMember) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type Pool struct {
-	PoolID  string
-	Comment string        `json:"comment,omitempty"`
-	Members *[]PoolMember `json:"members,omitempty"`
+type PoolStorage struct {
+	Content    StorageContent `json:"content"`
+	Disk       int            `json:"disk"`
+	ID         string         `json:"id"`
+	MaxDisk    int            `json:"maxdisk"`
+	Node       string         `json:"node"`
+	PluginType StorageType    `json:"plugintype"`
+	Shared     int            `json:"shared"`
+	Status     string         `json:"status"`
+	Storage    string         `json:"storage"`
+	Type       PoolMemberType `json:"type"`
 }
-
-type PoolList []Pool
 
 // RetrievePoolList Retrieves a list of pools.
 // **Note that the response DOES NOT include Members!**
@@ -100,7 +112,7 @@ func (c *Client) RetrievePool(poolID string) (*Pool, error) {
 	if err != nil {
 		return nil, err
 	}
-	var data Pool
+	data := Pool{PoolID: poolID}
 	err = json.Unmarshal(resp, &data)
 	return &data, err
 }
@@ -124,11 +136,12 @@ func (c *Client) UpdatePool(poolID string, comment *string, storageStorages, vmN
 		params.Add("comment", *comment)
 	}
 	if len(storageStorages) > 0 {
-		for _, item := range storageStorages {
-			if _, err := (*c).RetrieveStorage(item); err != nil {
-				return err
-			}
-		}
+		// TODO: Implement validation after we have RetrieveStorage()
+		// for _, item := range storageStorages {
+		// 	if _, err := (*c).RetrieveStorage(item); err != nil {
+		// 		return err
+		// 	}
+		// }
 		storages := strings.Join(storageStorages, ",")
 		params.Add("storage", storages)
 	}

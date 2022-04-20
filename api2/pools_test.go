@@ -15,7 +15,7 @@ func TestUnmarshalPoolMemberStorage(t *testing.T) {
     {
       "content": "vztmpl,images,rootdir,iso",
       "disk": 3812077568,
-      "id": "storage/pve/a7ltj8qh7k7",
+      "id": "storage/pve/%s",
       "maxdisk": 8087252992,
       "node": "pve",
       "plugintype": "dir",
@@ -23,13 +23,14 @@ func TestUnmarshalPoolMemberStorage(t *testing.T) {
       "status": "available",
       "storage": "%s",
       "type": "storage"
-    }`, expectedStorage))
+    }`, expectedStorage, expectedStorage))
 
 	var poolMember PoolMember
 	err := json.Unmarshal(storageJSON, &poolMember)
 	assert.NoError(t, err)
 	assert.Equal(t, PoolMemberTypeStorage, poolMember.Type)
-	assert.Equal(t, "storage", poolMember.Storage.Type)
+	assert.Equal(t, PoolMemberTypeStorage, poolMember.Storage.Type)
+	assert.Equal(t, StorageTypeDir, poolMember.Storage.PluginType)
 	assert.Equal(t, expectedStorage, poolMember.Storage.Storage)
 }
 
@@ -172,6 +173,7 @@ func TestPoolCreateAndRetrieve(t *testing.T) {
 
 	pool, err := testClient.RetrievePool(poolID)
 	assert.NoError(t, err)
+	assert.Equal(t, poolID, pool.PoolID)
 	assert.Equal(t, expectedComment, pool.Comment)
 }
 
