@@ -10,6 +10,8 @@ import (
 
 const storageBasePath = "/storage"
 
+type StorageList []Storage
+
 type Storage struct {
 	Content StorageContentList `json:"content"`
 	Digest  string             `json:"digest"`
@@ -57,13 +59,36 @@ func (scl *StorageContentList) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// func (c *Client) RetrieveStorageList() (io.Reader, error) {
-// 	apiURL := *c.ApiURL
-// 	apiURL.Path += storageBasePath
-// 	resp, err := doGet(c, &apiURL)
-// 	data := strings.NewReader(string(resp))
-// 	return data, err
-// }
+func (c *Client) RetrieveStorageList() (*StorageList, error) {
+	apiURL := *c.ApiURL
+	apiURL.Path += storageBasePath
+
+	resp, err := doGet(c, &apiURL)
+	if err != nil {
+		return nil, err
+	}
+
+	var data StorageList
+	err = json.Unmarshal(resp, &data)
+	return &data, err
+}
+
+func (c *Client) RetrieveStorageListOfType(storageType StorageType) (*StorageList, error) {
+	apiURL := *c.ApiURL
+	apiURL.Path += storageBasePath
+	params := url.Values{}
+	params.Add("type", string(storageType))
+	apiURL.RawQuery = params.Encode()
+
+	resp, err := doGet(c, &apiURL)
+	if err != nil {
+		return nil, err
+	}
+
+	var data StorageList
+	err = json.Unmarshal(resp, &data)
+	return &data, err
+}
 
 func (c *Client) RetrieveStorage(storage string) (*Storage, error) {
 	apiURL := *c.ApiURL
@@ -107,16 +132,22 @@ func (c *Client) DeleteStorage(storage string) error {
 	return err
 }
 
-// func (c *Client) UpdateStorage(storage string, options map[string]string) (io.Reader, error) {
-// 	apiURL := *c.ApiURL
-// 	apiURL.Path += storageBasePath
-// 	apiURL.Path += "/" + storage
-// 	params := url.Values{}
-// 	for k, v := range options {
-// 		params.Add(k, v)
-// 	}
-// 	apiURL.RawQuery = params.Encode()
-// 	resp, err := doPut(c, &apiURL)
-// 	data := strings.NewReader(string(resp))
-// 	return data, err
-// }
+func (c *Client) UpdateStorage(storage string, options map[string]string) (*Storage, error) {
+	apiURL := *c.ApiURL
+	apiURL.Path += storageBasePath
+	apiURL.Path += "/" + storage
+	params := url.Values{}
+	for k, v := range options {
+		params.Add(k, v)
+	}
+	apiURL.RawQuery = params.Encode()
+	resp, err := doPut(c, &apiURL)
+	if err != nil {
+		return nil, err
+	}
+	var data Storage
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, err
+	}
+	return &data, err
+}
