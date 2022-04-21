@@ -59,26 +59,23 @@ func (scl *StorageContentList) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (c *Client) RetrieveStorageList() (*StorageList, error) {
-	apiURL := *c.ApiURL
-	apiURL.Path += storageBasePath
+type retrieveStorageListOption func(*url.URL)
 
-	resp, err := doGet(c, &apiURL)
-	if err != nil {
-		return nil, err
+func WithTypeFilter(storageType StorageType) retrieveStorageListOption {
+	return func(apiURL *url.URL) {
+		params := url.Values{}
+		params.Add("type", string(storageType))
+		apiURL.RawQuery = params.Encode()
 	}
-
-	var data StorageList
-	err = json.Unmarshal(resp, &data)
-	return &data, err
 }
 
-func (c *Client) RetrieveStorageListOfType(storageType StorageType) (*StorageList, error) {
+func (c *Client) RetrieveStorageList(opts ...retrieveStorageListOption) (*StorageList, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += storageBasePath
-	params := url.Values{}
-	params.Add("type", string(storageType))
-	apiURL.RawQuery = params.Encode()
+
+	for _, opt := range opts {
+		opt(&apiURL)
+	}
 
 	resp, err := doGet(c, &apiURL)
 	if err != nil {

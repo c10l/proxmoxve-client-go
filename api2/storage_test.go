@@ -67,7 +67,7 @@ func TestStorageListRetrieve(t *testing.T) {
 	_, err = testClient.CreateStorage(storageStorage2, StorageTypeDir, map[string]string{"path": "/bar"})
 	assert.NoError(t, err)
 
-	storageList, err := testClient.RetrieveStorageListOfType(StorageTypeDir)
+	storageList, err := testClient.RetrieveStorageList()
 	assert.NoError(t, err)
 	var storageStorage1Path string
 	var storageStorage2Path string
@@ -81,6 +81,20 @@ func TestStorageListRetrieve(t *testing.T) {
 	}
 	assert.Equal(t, "/foo", storageStorage1Path)
 	assert.Equal(t, "/bar", storageStorage2Path)
+
+	storageList, err = testClient.RetrieveStorageList(WithTypeFilter(StorageTypeBTRFS))
+	assert.NoError(t, err)
+
+	storage1, err := testClient.RetrieveStorage(storageStorage1)
+	assert.NoError(t, err)
+	storage2, err := testClient.RetrieveStorage(storageStorage2)
+	assert.NoError(t, err)
+
+	for _, item := range *storageList {
+		msg := func(s *Storage) string { return fmt.Sprintf("Wrong type found when filtering for `btrfs`: %+v", s) }
+		assert.NotEqual(t, item.Storage, storageStorage1, msg(storage1))
+		assert.NotEqual(t, item.Storage, storageStorage2, msg(storage2))
+	}
 }
 
 func TestStorageUpdate(t *testing.T) {
