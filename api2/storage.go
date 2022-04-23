@@ -50,6 +50,14 @@ const (
 	StorageContentISO     StorageContent = "iso"
 )
 
+func (l *StorageContentList) StringSlice() []string {
+	var stringSlice []string
+	for _, item := range *l {
+		stringSlice = append(stringSlice, string(item))
+	}
+	return stringSlice
+}
+
 func (scl *StorageContentList) UnmarshalJSON(b []byte) error {
 	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
 	sort.Strings(parts)

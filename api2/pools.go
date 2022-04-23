@@ -13,8 +13,51 @@ const poolsBasePath = "/pools"
 type PoolList []Pool
 type Pool struct {
 	PoolID  string
-	Comment string        `json:"comment,omitempty"`
-	Members *[]PoolMember `json:"members,omitempty"`
+	Comment string       `json:"comment,omitempty"`
+	Members *PoolMembers `json:"members,omitempty"`
+}
+
+type PoolMembers struct {
+	Storage []PoolMemberStorage
+	Qemu    []node.Qemu
+	LXC     []node.LXC
+}
+
+func (pm *PoolMembers) UnmarshalJSON(b []byte) error {
+	var l []json.RawMessage
+	if err := json.Unmarshal(b, &l); err != nil {
+		return err
+	}
+	for _, item := range l {
+		type poolMember struct {
+			Type string `json:"type"`
+		}
+		var m poolMember
+		if err := json.Unmarshal(item, &m); err != nil {
+			return err
+		}
+		switch m.Type {
+		case "storage":
+			var storage PoolMemberStorage
+			if err := json.Unmarshal(item, &storage); err != nil {
+				return err
+			}
+			pm.Storage = append(pm.Storage, storage)
+		case "qemu":
+			var qemu node.Qemu
+			if err := json.Unmarshal(item, &qemu); err != nil {
+				return err
+			}
+			pm.Qemu = append(pm.Qemu, qemu)
+		case "lxc":
+			var lxc node.LXC
+			if err := json.Unmarshal(item, &lxc); err != nil {
+				return err
+			}
+			pm.LXC = append(pm.LXC, lxc)
+		}
+	}
+	return nil
 }
 
 type PoolMemberType string
@@ -25,48 +68,7 @@ const (
 	PoolMemberTypeLXC     PoolMemberType = "lxc"
 )
 
-type PoolMember struct {
-	Type    PoolMemberType
-	Storage *PoolStorage
-	Qemu    *node.Qemu
-	LXC     *node.LXC
-}
-
-func (pm *PoolMember) UnmarshalJSON(b []byte) error {
-	type poolMemberType struct {
-		Type string `json:"type"`
-	}
-	var pmType poolMemberType
-	if err := json.Unmarshal(b, &pmType); err != nil {
-		return err
-	}
-	switch pmType.Type {
-	case "storage":
-		var storage PoolStorage
-		if err := json.Unmarshal(b, &storage); err != nil {
-			return err
-		}
-		pm.Type = PoolMemberTypeStorage
-		pm.Storage = &storage
-	case "qemu":
-		var qemu node.Qemu
-		if err := json.Unmarshal(b, &qemu); err != nil {
-			return err
-		}
-		pm.Type = PoolMemberTypeQemu
-		pm.Qemu = &qemu
-	case "lxc":
-		var lxc node.LXC
-		if err := json.Unmarshal(b, &lxc); err != nil {
-			return err
-		}
-		pm.Type = PoolMemberTypeLXC
-		pm.LXC = &lxc
-	}
-	return nil
-}
-
-type PoolStorage struct {
+type PoolMemberStorage struct {
 	Content    StorageContent `json:"content"`
 	Disk       int            `json:"disk"`
 	ID         string         `json:"id"`

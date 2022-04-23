@@ -12,7 +12,7 @@ import (
 func TestUnmarshalPoolMemberStorage(t *testing.T) {
 	expectedStorage := rand.String(10)
 	storageJSON := []byte(fmt.Sprintf(`
-    {
+    [{
       "content": "vztmpl,images,rootdir,iso",
       "disk": 3812077568,
       "id": "storage/pve/%s",
@@ -23,21 +23,23 @@ func TestUnmarshalPoolMemberStorage(t *testing.T) {
       "status": "available",
       "storage": "%s",
       "type": "storage"
-    }`, expectedStorage, expectedStorage))
+    }]`, expectedStorage, expectedStorage))
 
-	var poolMember PoolMember
-	err := json.Unmarshal(storageJSON, &poolMember)
+	var poolMembers PoolMembers
+	err := json.Unmarshal(storageJSON, &poolMembers)
 	assert.NoError(t, err)
-	assert.Equal(t, PoolMemberTypeStorage, poolMember.Type)
-	assert.Equal(t, PoolMemberTypeStorage, poolMember.Storage.Type)
-	assert.Equal(t, StorageTypeDir, poolMember.Storage.PluginType)
-	assert.Equal(t, expectedStorage, poolMember.Storage.Storage)
+	assert.Len(t, poolMembers.Storage, 1)
+	assert.Len(t, poolMembers.Qemu, 0)
+	assert.Len(t, poolMembers.LXC, 0)
+	assert.Equal(t, PoolMemberTypeStorage, poolMembers.Storage[0].Type)
+	assert.Equal(t, StorageTypeDir, poolMembers.Storage[0].PluginType)
+	assert.Equal(t, expectedStorage, poolMembers.Storage[0].Storage)
 }
 
 func TestUnmarshalPoolMemberQemu(t *testing.T) {
 	expectedName := rand.String(10)
 	qemuJSON := []byte(fmt.Sprintf(`
-    {
+    [{
       "cpu": 0,
       "disk": 0,
       "diskread": 0,
@@ -56,20 +58,22 @@ func TestUnmarshalPoolMemberQemu(t *testing.T) {
       "type": "qemu",
       "uptime": 0,
       "vmid": 100
-    }`, expectedName))
+    }]`, expectedName))
 
-	var poolMember PoolMember
-	err := json.Unmarshal(qemuJSON, &poolMember)
+	var poolMembers PoolMembers
+	err := json.Unmarshal(qemuJSON, &poolMembers)
 	assert.NoError(t, err)
-	assert.Equal(t, PoolMemberTypeQemu, poolMember.Type)
-	assert.Equal(t, "qemu", poolMember.Qemu.Type)
-	assert.Equal(t, expectedName, poolMember.Qemu.Name)
+	assert.Len(t, poolMembers.Storage, 0)
+	assert.Len(t, poolMembers.Qemu, 1)
+	assert.Len(t, poolMembers.LXC, 0)
+	assert.Equal(t, string(PoolMemberTypeQemu), poolMembers.Qemu[0].Type)
+	assert.Equal(t, expectedName, poolMembers.Qemu[0].Name)
 }
 
 func TestUnmarshalPoolMemberLXC(t *testing.T) {
 	expectedName := rand.String(10)
 	lxcJSON := []byte(fmt.Sprintf(`
-    {
+    [{
       "cpu": 0,
       "disk": 0,
       "diskread": 0,
@@ -88,14 +92,17 @@ func TestUnmarshalPoolMemberLXC(t *testing.T) {
       "type": "lxc",
       "uptime": 0,
       "vmid": 100
-    }`, expectedName))
+    }]`, expectedName))
 
-	var poolMember PoolMember
-	err := json.Unmarshal(lxcJSON, &poolMember)
+	var poolMembers PoolMembers
+	err := json.Unmarshal(lxcJSON, &poolMembers)
 	assert.NoError(t, err)
-	assert.Equal(t, PoolMemberTypeLXC, poolMember.Type)
-	assert.Equal(t, "lxc", poolMember.LXC.Type)
-	assert.Equal(t, expectedName, poolMember.LXC.Name)
+	assert.Len(t, poolMembers.Storage, 0)
+	assert.Len(t, poolMembers.Qemu, 0)
+	assert.Len(t, poolMembers.LXC, 1)
+	assert.Equal(t, string(PoolMemberTypeLXC), poolMembers.LXC[0].Type)
+	assert.Equal(t, "lxc", poolMembers.LXC[0].Type)
+	assert.Equal(t, expectedName, poolMembers.LXC[0].Name)
 }
 
 func TestUnmarshalPoolMembers(t *testing.T) {
@@ -160,9 +167,9 @@ func TestUnmarshalPoolMembers(t *testing.T) {
 	var pool Pool
 	err := json.Unmarshal(poolJSON, &pool)
 	assert.NoError(t, err)
-	assert.Equal(t, PoolMemberTypeQemu, (*pool.Members)[0].Type)
-	assert.Equal(t, PoolMemberTypeLXC, (*pool.Members)[1].Type)
-	assert.Equal(t, PoolMemberTypeStorage, (*pool.Members)[2].Type)
+	assert.Equal(t, string(PoolMemberTypeQemu), pool.Members.Qemu[0].Type)
+	assert.Equal(t, string(PoolMemberTypeLXC), pool.Members.LXC[0].Type)
+	assert.Equal(t, PoolMemberTypeStorage, pool.Members.Storage[0].Type)
 }
 
 func TestPoolCreateAndRetrieve(t *testing.T) {
