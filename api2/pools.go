@@ -69,16 +69,16 @@ const (
 )
 
 type PoolMemberStorage struct {
-	Content    StorageContent `json:"content"`
-	Disk       int            `json:"disk"`
-	ID         string         `json:"id"`
-	MaxDisk    int            `json:"maxdisk"`
-	Node       string         `json:"node"`
-	PluginType StorageType    `json:"plugintype"`
-	Shared     int            `json:"shared"`
-	Status     string         `json:"status"`
-	Storage    string         `json:"storage"`
-	Type       PoolMemberType `json:"type"`
+	Content    StorageContentList `json:"content"`
+	Disk       int                `json:"disk"`
+	ID         string             `json:"id"`
+	MaxDisk    int                `json:"maxdisk"`
+	Node       string             `json:"node"`
+	PluginType StorageType        `json:"plugintype"`
+	Shared     int                `json:"shared"`
+	Status     string             `json:"status"`
+	Storage    string             `json:"storage"`
+	Type       PoolMemberType     `json:"type"`
 }
 
 // RetrievePoolList Retrieves a list of pools.
