@@ -2,6 +2,7 @@ package api2
 
 import (
 	"encoding/json"
+	"errors"
 	"net/url"
 	"strings"
 
@@ -107,6 +108,9 @@ func (c *Client) CreatePool(poolID, comment string) error {
 }
 
 func (c *Client) RetrievePool(poolID string) (*Pool, error) {
+	if poolID == "" {
+		return nil, errors.New("poolID cannot be empty")
+	}
 	apiURL := *c.ApiURL
 	apiURL.Path += poolsBasePath
 	apiURL.Path += "/" + poolID
