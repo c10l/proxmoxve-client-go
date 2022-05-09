@@ -1,114 +1,54 @@
 package api2
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
 
-func TestUnmarshalStorage(t *testing.T) {
-	expectedStorage := rand.String(10)
-	storageJSON := []byte(fmt.Sprintf(`
-    {
-      "content": "%s,%s",
-      "digest": "8391f10ff1f67c76bda33d11a07ca4504cad38be",
-      "path": "/foobar",
-      "storage": "%s",
-      "type": "dir"
-    }`, StorageContentImages, StorageContentISO, expectedStorage))
-
-	storage := new(Storage)
-	err := json.Unmarshal(storageJSON, storage)
-	assert.NoError(t, err)
-	assert.Equal(t, expectedStorage, storage.Storage)
-	assert.Contains(t, storage.Content, StorageContentImages)
-	assert.Contains(t, storage.Content, StorageContentISO)
-}
-
 func TestStorageCreateAndRetrieve(t *testing.T) {
 	storageStorage := "a" + rand.String(10)
-	actualStorage, err := testClient.CreateStorage(storageStorage, StorageTypeDir, map[string]string{"path": "/foo"})
+	actualStorage, err := testClient.PostStorage(storageStorage, StorageTypeDir, map[string]string{"path": "/foo"})
 	assert.NoError(t, err)
 	assert.Equal(t, storageStorage, actualStorage.Storage)
 	assert.Equal(t, StorageTypeDir, actualStorage.Type)
 
-	storage, err := testClient.RetrieveStorage(storageStorage)
+	storageList, err := testClient.GetStorageList()
 	assert.NoError(t, err)
+
+	var storage Storage
+	for _, i := range *storageList {
+		if i.Storage == storageStorage {
+			storage = i
+		}
+	}
 	assert.Equal(t, storageStorage, storage.Storage)
 	assert.Contains(t, storage.Content, StorageContentImages)
 	assert.Contains(t, storage.Content, StorageContentRootDir)
-}
-
-func TestStorageDelete(t *testing.T) {
-	storageStorage := "a" + rand.String(10)
-
-	_, err := testClient.CreateStorage(storageStorage, StorageTypeDir, map[string]string{"path": "/foo"})
-	assert.NoError(t, err)
-
-	_, err = testClient.RetrieveStorage(storageStorage)
-	assert.NoError(t, err)
-
-	err = testClient.DeleteStorage(storageStorage)
-	assert.NoError(t, err)
-
-	_, err = testClient.RetrieveStorage(storageStorage)
-	assert.ErrorContains(t, err, fmt.Sprintf("500 storage '%s' does not exist", storageStorage))
 }
 
 func TestStorageListRetrieve(t *testing.T) {
 	storageStorage1 := "a" + rand.String(10)
 	storageStorage2 := "a" + rand.String(10)
 
-	_, err := testClient.CreateStorage(storageStorage1, StorageTypeDir, map[string]string{"path": "/foo"})
+	_, err := testClient.PostStorage(storageStorage1, StorageTypeDir, map[string]string{"path": "/foo"})
 	assert.NoError(t, err)
-	_, err = testClient.CreateStorage(storageStorage2, StorageTypeDir, map[string]string{"path": "/bar"})
+	_, err = testClient.PostStorage(storageStorage2, StorageTypeDir, map[string]string{"path": "/bar"})
 	assert.NoError(t, err)
 
-	storageList, err := testClient.RetrieveStorageList()
+	storageList, err := testClient.GetStorageList(WithStorageTypeFilter(StorageTypeDir))
 	assert.NoError(t, err)
 	var storageStorage1Path string
 	var storageStorage2Path string
-	for _, item := range *storageList {
-		if item.Storage == storageStorage1 {
-			storageStorage1Path = item.Path
+	for _, i := range *storageList {
+		if i.Storage == storageStorage1 {
+			storageStorage1Path = i.Path
 		}
-		if item.Storage == storageStorage2 {
-			storageStorage2Path = item.Path
+		if i.Storage == storageStorage2 {
+			storageStorage2Path = i.Path
 		}
 	}
 	assert.Equal(t, "/foo", storageStorage1Path)
 	assert.Equal(t, "/bar", storageStorage2Path)
-
-	storageList, err = testClient.RetrieveStorageList(WithTypeFilter(StorageTypeBTRFS))
-	assert.NoError(t, err)
-
-	storage1, err := testClient.RetrieveStorage(storageStorage1)
-	assert.NoError(t, err)
-	storage2, err := testClient.RetrieveStorage(storageStorage2)
-	assert.NoError(t, err)
-
-	for _, item := range *storageList {
-		msg := func(s *Storage) string { return fmt.Sprintf("Wrong type found when filtering for `btrfs`: %+v", s) }
-		assert.NotEqual(t, item.Storage, storageStorage1, msg(storage1))
-		assert.NotEqual(t, item.Storage, storageStorage2, msg(storage2))
-	}
-}
-
-func TestStorageUpdate(t *testing.T) {
-	storageStorage := "a" + rand.String(10)
-
-	createOptions := map[string]string{"path": "/foo", "content": fmt.Sprintf("%s,%s", StorageContentISO, StorageContentRootDir)}
-	_, err := testClient.CreateStorage(storageStorage, StorageTypeDir, createOptions)
-	assert.NoError(t, err)
-
-	_, err = testClient.UpdateStorage(storageStorage, map[string]string{"content": string(StorageContentVZTMPL)})
-	assert.NoError(t, err)
-
-	actualStorage, err := testClient.RetrieveStorage(storageStorage)
-	assert.NoError(t, err)
-	assert.Len(t, actualStorage.Content, 1)
-	assert.Contains(t, actualStorage.Content, StorageContentVZTMPL)
 }
