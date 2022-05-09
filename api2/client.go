@@ -37,7 +37,7 @@ func NewClient(baseURL, tokenID, secret string, tlsInsecure bool) (*Client, erro
 		HTTPClient:  httpClient,
 	}
 
-	if _, err := client.RetrieveVersion(); err != nil {
+	if _, err := client.GetVersion(); err != nil {
 		return nil, err
 	}
 

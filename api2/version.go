@@ -12,7 +12,7 @@ type Version struct {
 	Version string `json:"version"`
 }
 
-func (c *Client) RetrieveVersion() (*Version, error) {
+func (c *Client) GetVersion() (*Version, error) {
 	apiURL := *c.ApiURL
 	apiURL.Path += versionBasePath
 	resp, err := doGet(c, &apiURL)
