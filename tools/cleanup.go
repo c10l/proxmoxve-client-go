@@ -39,14 +39,14 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		os.Exit(1)
 	}
 
-	poolList, err := c.RetrievePoolList()
+	poolList, err := c.GetPools()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 	for _, item := range poolList {
 		fmt.Printf("Deleting Pool %s\n", item.PoolID)
-		if c.DeletePool(item.PoolID) != nil {
+		if c.DeletePoolsResource(item.PoolID) != nil {
 			fmt.Println(err)
 		}
 	}

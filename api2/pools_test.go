@@ -172,59 +172,27 @@ func TestUnmarshalPoolMembers(t *testing.T) {
 	assert.Equal(t, PoolMemberTypeStorage, pool.Members.Storage[0].Type)
 }
 
-func TestPoolCreateAndRetrieve(t *testing.T) {
+func TestPoolsPostAndGet(t *testing.T) {
 	poolID := rand.String(10)
 	expectedComment := rand.String(20)
-	err := testClient.CreatePool(poolID, expectedComment)
+	err := testClient.PostPool(poolID, expectedComment)
 	assert.NoError(t, err)
 
-	pool, err := testClient.RetrievePool(poolID)
+	pools, err := testClient.GetPoolsList()
 	assert.NoError(t, err)
-	assert.Equal(t, poolID, pool.PoolID)
-	assert.Equal(t, expectedComment, pool.Comment)
-}
-
-func TestPoolUpdateComment(t *testing.T) {
-	poolID := rand.String(10)
-	expectedComment := rand.String(20)
-
-	err := testClient.CreatePool(poolID, expectedComment)
-	assert.NoError(t, err)
-
-	err = testClient.UpdatePool(poolID, &expectedComment, nil, nil, false)
-	assert.NoError(t, err)
-
-	pool, err := testClient.RetrievePool(poolID)
-	assert.NoError(t, err)
-	assert.Equal(t, expectedComment, pool.Comment)
-}
-
-func TestPoolDelete(t *testing.T) {
-	poolID := rand.String(10)
-
-	err := testClient.CreatePool(poolID, "")
-	assert.NoError(t, err)
-
-	_, err = testClient.RetrievePool(poolID)
-	assert.NoError(t, err)
-
-	err = testClient.DeletePool(poolID)
-	assert.NoError(t, err)
-
-	_, err = testClient.RetrievePool(poolID)
-	assert.ErrorContains(t, err, fmt.Sprintf("500 pool '%s' does not exist", poolID))
+	assert.Contains(t, pools, Pool{PoolID: poolID, Comment: expectedComment})
 }
 
 func TestPoolListRetrieve(t *testing.T) {
 	poolID1 := rand.String(10)
 	poolID2 := rand.String(10)
 
-	err := testClient.CreatePool(poolID1, "")
+	err := testClient.PostPool(poolID1, "")
 	assert.NoError(t, err)
-	err = testClient.CreatePool(poolID2, "")
+	err = testClient.PostPool(poolID2, "")
 	assert.NoError(t, err)
 
-	poolList, err := testClient.RetrievePoolList()
+	poolList, err := testClient.GetPoolsList()
 	assert.NoError(t, err)
 	assert.Contains(t, poolList, Pool{PoolID: poolID1, Comment: ""})
 	assert.Contains(t, poolList, Pool{PoolID: poolID2, Comment: ""})
