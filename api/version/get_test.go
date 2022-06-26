@@ -8,7 +8,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
-	version, err := GetRequest{client: test.APITestClient()}.Do()
+	version, err := GetRequest{Client: test.APITestClient()}.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, version)
 	assert.Regexp(t, `\d\.\d-\d`, version.Version)

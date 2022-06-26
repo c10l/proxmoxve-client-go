@@ -7,7 +7,8 @@ import (
 )
 
 type ItemGetRequest struct {
-	client  *api.Client
+	Client *api.Client
+
 	Storage string
 }
 
@@ -26,9 +27,9 @@ type ItemGetResponse struct {
 
 func (g ItemGetRequest) Do() (*ItemGetResponse, error) {
 	var r ItemGetResponse
-	apiURL := g.client.ApiURL
+	apiURL := g.Client.ApiURL
 	apiURL.Path += basePath + "/" + g.Storage
-	resp, err := g.client.Get(apiURL)
+	resp, err := g.Client.Get(apiURL)
 	if err != nil {
 		return nil, err
 	}

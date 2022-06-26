@@ -8,7 +8,8 @@ import (
 )
 
 type ItemPutRequest struct {
-	client  *api.Client
+	Client *api.Client
+
 	Storage string
 	Content []Content
 }
@@ -21,12 +22,12 @@ type ItemPutResponse struct {
 
 func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
 	var r ItemPutResponse
-	apiURL := g.client.ApiURL
+	apiURL := g.Client.ApiURL
 	apiURL.Path += basePath + "/" + g.Storage
 	params := url.Values{}
 	params.Add("content", contentList(&g.Content))
 	apiURL.RawQuery = params.Encode()
-	resp, err := g.client.Put(apiURL)
+	resp, err := g.Client.Put(apiURL)
 	if err != nil {
 		return nil, err
 	}

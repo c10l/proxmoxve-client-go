@@ -9,7 +9,7 @@ import (
 )
 
 func TestPost(t *testing.T) {
-	req := PostRequest{client: test.APITestClient()}
+	req := PostRequest{Client: test.APITestClient()}
 	req.Storage = "a" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"

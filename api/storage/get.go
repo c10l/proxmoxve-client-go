@@ -8,8 +8,9 @@ import (
 )
 
 type GetRequest struct {
-	client      *api.Client
-	storageType Type
+	Client *api.Client
+
+	StorageType Type
 }
 
 type GetResponse []GetResponseStorage
@@ -25,14 +26,14 @@ type GetResponseStorage struct {
 
 func (g GetRequest) Do() (*GetResponse, error) {
 	var s GetResponse
-	apiURL := g.client.ApiURL
+	apiURL := g.Client.ApiURL
 	apiURL.Path += basePath
-	if g.storageType != "" {
+	if g.StorageType != "" {
 		params := url.Values{}
-		params.Add("type", string(g.storageType))
+		params.Add("type", string(g.StorageType))
 		apiURL.RawQuery = params.Encode()
 	}
-	resp, err := g.client.Get(apiURL)
+	resp, err := g.Client.Get(apiURL)
 	if err != nil {
 		return nil, err
 	}

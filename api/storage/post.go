@@ -9,9 +9,11 @@ import (
 )
 
 type PostRequest struct {
-	client        *api.Client
-	Storage       string
-	StorageType   Type
+	Client *api.Client
+
+	Storage     string
+	StorageType Type
+
 	Path          *string
 	Content       *[]Content
 	Nodes         *string
@@ -37,7 +39,7 @@ type PostResponse struct {
 
 func (p PostRequest) Do() (*PostResponse, error) {
 	var s PostResponse
-	apiURL := p.client.ApiURL
+	apiURL := p.Client.ApiURL
 	apiURL.Path += basePath
 	params := url.Values{}
 	params.Add("storage", p.Storage)
@@ -59,7 +61,7 @@ func (p PostRequest) Do() (*PostResponse, error) {
 		params.Add("preallocation", string(*p.Preallocation))
 	}
 	apiURL.RawQuery = params.Encode()
-	resp, err := p.client.Post(apiURL)
+	resp, err := p.Client.Post(apiURL)
 	if err != nil {
 		return nil, err
 	}

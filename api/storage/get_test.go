@@ -60,7 +60,7 @@ func TestUnmarshalGetResponseStorage(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	storageList, err := GetRequest{client: test.APITestClient()}.Do()
+	storageList, err := GetRequest{Client: test.APITestClient()}.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, storageList)
 }

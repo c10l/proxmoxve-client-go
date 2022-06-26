@@ -10,7 +10,7 @@ import (
 
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
-		client:      test.APITestClient(),
+		Client:      test.APITestClient(),
 		Storage:     "a" + rand.String(10),
 		StorageType: TypeDir,
 		Path:        func() *string { s := "/foo"; return &s }(),
@@ -18,7 +18,7 @@ func TestItemGet(t *testing.T) {
 	_, err := req.Do()
 	assert.NoError(t, err)
 
-	resp, err := ItemGetRequest{client: test.APITestClient(), Storage: req.Storage}.Do()
+	resp, err := ItemGetRequest{Client: test.APITestClient(), Storage: req.Storage}.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, req.Storage, resp.Storage)
