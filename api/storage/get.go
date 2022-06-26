@@ -10,31 +10,10 @@ import (
 	"github.com/c10l/proxmoxve-client-go/api"
 )
 
-const basePath = "/storage"
-
 type GetRequest struct {
 	client      *api.Client
-	storageType GetRequestStorageType
+	storageType Type
 }
-
-type GetRequestStorageType string
-
-const (
-	GetRequestStorageTypeBTRFS       GetRequestStorageType = "btrfs"
-	GetRequestStorageTypeCephFS      GetRequestStorageType = "cephfs"
-	GetRequestStorageTypeCIFS        GetRequestStorageType = "cifs"
-	GetRequestStorageTypeDir         GetRequestStorageType = "dir"
-	GetRequestStorageTypeGlusterFS   GetRequestStorageType = "glusterfs"
-	GetRequestStorageTypeISCSI       GetRequestStorageType = "iscsi"
-	GetRequestStorageTypeISCSIDirect GetRequestStorageType = "iscsidirect"
-	GetRequestStorageTypeLVM         GetRequestStorageType = "lvm"
-	GetRequestStorageTypeLVMThin     GetRequestStorageType = "lvmthin"
-	GetRequestStorageTypeNFS         GetRequestStorageType = "nfs"
-	GetRequestStorageTypePBS         GetRequestStorageType = "pbs"
-	GetRequestStorageTypeRBD         GetRequestStorageType = "rbd"
-	GetRequestStorageTypeZFS         GetRequestStorageType = "zfs"
-	GetRequestStorageTypeZFSPool     GetRequestStorageType = "zfspool"
-)
 
 type GetResponse []GetResponseStorage
 type GetResponseStorage struct {
@@ -44,24 +23,16 @@ type GetResponseStorage struct {
 	PruneBackups string                 `json:"prune-backups,omitempty"`
 	Shared       int                    `json:"shared,omitempty"`
 	Storage      string                 `json:"storage,omitempty"`
-	Type         GetRequestStorageType  `json:"type,omitempty"`
+	Type         Type                   `json:"type,omitempty"`
 }
 
-type GetResponseContentList []GetResponseContent
-type GetResponseContent string
-
-const (
-	GetResponseContentVZTMPL  GetResponseContent = "vztmpl"
-	GetResponseContentImages  GetResponseContent = "images"
-	GetResponseContentRootDir GetResponseContent = "rootdir"
-	GetResponseContentISO     GetResponseContent = "iso"
-)
+type GetResponseContentList []Content
 
 func (l *GetResponseContentList) UnmarshalJSON(b []byte) error {
 	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
 	sort.Strings(parts)
 	for _, item := range parts {
-		*l = append(*l, GetResponseContent(item))
+		*l = append(*l, Content(item))
 	}
 	return nil
 }

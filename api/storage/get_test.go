@@ -34,10 +34,10 @@ func TestUnmarshalGetResponseStorageList(t *testing.T) {
 	err := json.Unmarshal(storageListJSON, storageList)
 	assert.NoError(t, err)
 	assert.Equal(t, "local", (*storageList)[0].Storage)
-	assert.Contains(t, (*storageList)[0].Content, GetResponseContentImages)
-	assert.Contains(t, (*storageList)[0].Content, GetResponseContentISO)
+	assert.Contains(t, (*storageList)[0].Content, ContentImages)
+	assert.Contains(t, (*storageList)[0].Content, ContentISO)
 	assert.Equal(t, "foo", (*storageList)[1].Storage)
-	assert.Contains(t, (*storageList)[1].Content, GetResponseContentImages)
+	assert.Contains(t, (*storageList)[1].Content, ContentImages)
 }
 
 func TestUnmarshalGetResponseStorage(t *testing.T) {
@@ -49,14 +49,14 @@ func TestUnmarshalGetResponseStorage(t *testing.T) {
       "path": "/foobar",
       "storage": "%s",
       "type": "dir"
-    }`, GetResponseContentImages, GetResponseContentISO, expectedStorage))
+    }`, ContentImages, ContentISO, expectedStorage))
 
 	storage := new(GetResponseStorage)
 	err := json.Unmarshal(storageJSON, storage)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedStorage, storage.Storage)
-	assert.Contains(t, storage.Content, GetResponseContentImages)
-	assert.Contains(t, storage.Content, GetResponseContentISO)
+	assert.Contains(t, storage.Content, ContentImages)
+	assert.Contains(t, storage.Content, ContentISO)
 }
 
 func TestGet(t *testing.T) {
