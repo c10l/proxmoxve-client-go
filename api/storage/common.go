@@ -24,8 +24,9 @@ const (
 type Content string
 
 const (
-	ContentVZTMPL  Content = "vztmpl"
-	ContentImages  Content = "images"
-	ContentRootDir Content = "rootdir"
-	ContentISO     Content = "iso"
+	ContentVZTMPL   Content = "vztmpl"
+	ContentImages   Content = "images"
+	ContentRootDir  Content = "rootdir"
+	ContentISO      Content = "iso"
+	ContentSnippets Content = "snippets"
 )

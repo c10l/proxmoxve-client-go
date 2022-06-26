@@ -12,7 +12,8 @@ func TestPost(t *testing.T) {
 	req := PostRequest{client: test.APITestClient()}
 	req.Storage = "a" + rand.String(10)
 	req.StorageType = TypeDir
-	req.Path = "/foo"
+	path := "/foo"
+	req.Path = &path
 	response, err := req.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
