@@ -63,5 +63,4 @@ func TestGet(t *testing.T) {
 	storageList, err := GetRequest{client: test.APITestClient()}.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, storageList)
-	assert.Equal(t, "local", (*storageList)[0].Storage)
 }
