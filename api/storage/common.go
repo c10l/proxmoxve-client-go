@@ -1,5 +1,11 @@
 package storage
 
+import (
+	"bytes"
+	"sort"
+	"strings"
+)
+
 const basePath = "/storage"
 
 type Type string
@@ -30,3 +36,14 @@ const (
 	ContentISO      Content = "iso"
 	ContentSnippets Content = "snippets"
 )
+
+type ContentList []Content
+
+func (l *ContentList) UnmarshalJSON(b []byte) error {
+	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
+	sort.Strings(parts)
+	for _, item := range parts {
+		*l = append(*l, Content(item))
+	}
+	return nil
+}

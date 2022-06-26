@@ -1,11 +1,8 @@
 package storage
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/url"
-	"sort"
-	"strings"
 
 	"github.com/c10l/proxmoxve-client-go/api"
 )
@@ -17,24 +14,13 @@ type GetRequest struct {
 
 type GetResponse []GetResponseStorage
 type GetResponseStorage struct {
-	Content      GetResponseContentList `json:"content,omitempty"`
-	Digest       string                 `json:"digest,omitempty"`
-	Path         string                 `json:"path,omitempty"`
-	PruneBackups string                 `json:"prune-backups,omitempty"`
-	Shared       int                    `json:"shared,omitempty"`
-	Storage      string                 `json:"storage,omitempty"`
-	Type         Type                   `json:"type,omitempty"`
-}
-
-type GetResponseContentList []Content
-
-func (l *GetResponseContentList) UnmarshalJSON(b []byte) error {
-	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
-	sort.Strings(parts)
-	for _, item := range parts {
-		*l = append(*l, Content(item))
-	}
-	return nil
+	Content      ContentList `json:"content,omitempty"`
+	Digest       string      `json:"digest,omitempty"`
+	Path         string      `json:"path,omitempty"`
+	PruneBackups string      `json:"prune-backups,omitempty"`
+	Shared       int         `json:"shared,omitempty"`
+	Storage      string      `json:"storage,omitempty"`
+	Type         Type        `json:"type,omitempty"`
 }
 
 func (g GetRequest) Do() (*GetResponse, error) {

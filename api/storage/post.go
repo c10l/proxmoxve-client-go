@@ -44,7 +44,7 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	params.Add("type", string(p.StorageType))
 	params.Add("path", *p.Path)
 	if p.Content != nil {
-		params.Add("content", ContentList(p.Content))
+		params.Add("content", contentList(p.Content))
 	}
 	if p.Nodes != nil {
 		params.Add("nodes", *p.Nodes)
@@ -66,7 +66,7 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	return &s, json.Unmarshal(resp, &s)
 }
 
-func ContentList(l *[]Content) string {
+func contentList(l *[]Content) string {
 	contentList := ""
 	for i, c := range *l {
 		if i == len(*l) {
