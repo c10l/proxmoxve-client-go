@@ -22,12 +22,12 @@ type ItemPutResponse struct {
 
 func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
 	var r ItemPutResponse
-	apiURL := g.Client.ApiURL
+	apiURL := *g.Client.ApiURL
 	apiURL.Path += basePath + "/" + g.Storage
 	params := url.Values{}
 	params.Add("content", contentList(&g.Content))
 	apiURL.RawQuery = params.Encode()
-	resp, err := g.Client.Put(apiURL)
+	resp, err := g.Client.Put(&apiURL)
 	if err != nil {
 		return nil, err
 	}

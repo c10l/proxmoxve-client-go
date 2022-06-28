@@ -9,8 +9,8 @@ type ItemDeleteRequest struct {
 }
 
 func (r ItemDeleteRequest) Do() error {
-	apiURL := r.Client.ApiURL
+	apiURL := *r.Client.ApiURL
 	apiURL.Path += basePath + "/" + r.Storage
-	_, err := r.Client.Delete(apiURL)
+	_, err := r.Client.Delete(&apiURL)
 	return err
 }

@@ -26,14 +26,14 @@ type GetResponseStorage struct {
 
 func (g GetRequest) Do() (*GetResponse, error) {
 	var s GetResponse
-	apiURL := g.Client.ApiURL
+	apiURL := *g.Client.ApiURL
 	apiURL.Path += basePath
 	if g.StorageType != "" {
 		params := url.Values{}
 		params.Add("type", string(g.StorageType))
 		apiURL.RawQuery = params.Encode()
 	}
-	resp, err := g.Client.Get(apiURL)
+	resp, err := g.Client.Get(&apiURL)
 	if err != nil {
 		return nil, err
 	}
