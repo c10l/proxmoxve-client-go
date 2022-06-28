@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/c10l/proxmoxve-client-go/api"
 )
@@ -26,6 +27,10 @@ type ItemGetResponse struct {
 }
 
 func (g ItemGetRequest) Do() (*ItemGetResponse, error) {
+	if g.Storage == "" {
+		return nil, fmt.Errorf("storage is required")
+	}
+
 	var r ItemGetResponse
 	apiURL := *g.Client.ApiURL
 	apiURL.Path += basePath + "/" + g.Storage
