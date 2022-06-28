@@ -1,6 +1,10 @@
 package storage
 
-import "github.com/c10l/proxmoxve-client-go/api"
+import (
+	"fmt"
+
+	"github.com/c10l/proxmoxve-client-go/api"
+)
 
 type ItemDeleteRequest struct {
 	Client *api.Client
@@ -9,6 +13,10 @@ type ItemDeleteRequest struct {
 }
 
 func (r ItemDeleteRequest) Do() error {
+	if r.Storage == "" {
+		return fmt.Errorf("storage is required")
+	}
+
 	apiURL := *r.Client.ApiURL
 	apiURL.Path += basePath + "/" + r.Storage
 	_, err := r.Client.Delete(&apiURL)
