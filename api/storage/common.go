@@ -30,11 +30,12 @@ const (
 type Content string
 
 const (
-	ContentVZTMPL   Content = "vztmpl"
+	ContentBackup   Content = "backup"
 	ContentImages   Content = "images"
-	ContentRootDir  Content = "rootdir"
 	ContentISO      Content = "iso"
+	ContentRootDir  Content = "rootdir"
 	ContentSnippets Content = "snippets"
+	ContentVZTmpl   Content = "vztmpl"
 )
 
 type ContentList []Content
