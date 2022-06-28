@@ -19,16 +19,16 @@ type PostRequest struct {
 	Nodes         *string
 	Disable       *bool
 	Shared        *bool
-	Preallocation *PreAllocation
+	Preallocation *Preallocation
 }
 
-type PreAllocation string
+type Preallocation string
 
 const (
-	PreAllocationOff       PreAllocation = "off"
-	PreAllocationMetadata  PreAllocation = "metadata"
-	PreAllocationFallocate PreAllocation = "fallocate"
-	PreAllocationFull      PreAllocation = "full"
+	PreAllocationOff       Preallocation = "off"
+	PreAllocationMetadata  Preallocation = "metadata"
+	PreAllocationFallocate Preallocation = "fallocate"
+	PreAllocationFull      Preallocation = "full"
 )
 
 type PostResponse struct {

@@ -21,7 +21,7 @@ type ItemGetResponse struct {
 	Nodes         string        `json:"nodes"`
 	Disable       bool          `json:"disable"`
 	Shared        bool          `json:"shared"`
-	PreAllocation PreAllocation `json:"preallocation"`
+	Preallocation Preallocation `json:"preallocation"`
 	Path          string        `json:"path"`
 	PruneBackups  string        `json:"prune-backups"`
 }
