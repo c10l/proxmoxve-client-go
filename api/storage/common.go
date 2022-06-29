@@ -37,7 +37,7 @@ const (
 func listJoin(l *[]string, separator string) string {
 	contentList := ""
 	for i, c := range *l {
-		if i == len(*l) {
+		if i == len(*l)-1 {
 			contentList += string(c)
 		} else {
 			contentList += string(c) + separator

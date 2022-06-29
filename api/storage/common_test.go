@@ -40,3 +40,39 @@ func Test_rawListSplitAndSort(t *testing.T) {
 		})
 	}
 }
+
+func Test_listJoin(t *testing.T) {
+	type args struct {
+		l         *[]string
+		separator string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "empty",
+			args: args{
+				l:         &[]string{},
+				separator: ",",
+			},
+			want: "",
+		},
+		{
+			name: "foo bar",
+			args: args{
+				l:         &[]string{"foo", "bar"},
+				separator: ",",
+			},
+			want: "foo,bar",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := listJoin(tt.args.l, tt.args.separator); got != tt.want {
+				t.Errorf("listJoin() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
