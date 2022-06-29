@@ -60,7 +60,6 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	if p.Preallocation != nil {
 		params.Add("preallocation", string(*p.Preallocation))
 	}
-	fmt.Printf("---> %s\n\n", params.Encode())
 	apiURL.RawQuery = params.Encode()
 	resp, err := p.Client.Post(&apiURL)
 	if err != nil {
