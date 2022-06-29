@@ -18,7 +18,7 @@ func TestItemPut(t *testing.T) {
 	_, err := req.Do()
 	assert.NoError(t, err)
 
-	putRest, err := ItemPutRequest{Client: test.APITestClient(), Storage: req.Storage, Content: ContentList{"images"}}.Do()
+	putRest, err := ItemPutRequest{Client: test.APITestClient(), Storage: req.Storage, Content: []string{"images"}}.Do()
 	assert.NoError(t, err)
 	assert.Equal(t, req.Storage, putRest.Storage)
 	assert.Equal(t, TypeDir, putRest.Type)

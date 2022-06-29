@@ -14,6 +14,7 @@ func TestItemGet(t *testing.T) {
 		Storage:     "a" + rand.String(10),
 		StorageType: TypeDir,
 		Path:        func() *string { s := "/foo"; return &s }(),
+		Nodes:       &[]string{"pve"},
 	}
 	_, err := req.Do()
 	assert.NoError(t, err)
@@ -22,7 +23,8 @@ func TestItemGet(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, req.Storage, resp.Storage)
-	assert.Equal(t, ContentList{"images", "rootdir"}, resp.Content)
+	assert.Equal(t, []string{"images", "rootdir"}, resp.Content)
 	assert.Equal(t, "/foo", resp.Path)
 	assert.Equal(t, TypeDir, resp.Type)
+	assert.Equal(t, []string{"pve"}, resp.Nodes)
 }

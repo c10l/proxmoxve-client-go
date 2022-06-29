@@ -11,29 +11,29 @@ import (
 type PostRequest struct {
 	Client *api.Client
 
+	// Required fields
 	Storage     string
-	StorageType Type
+	StorageType string
 
+	// Optional fields
 	Path          *string
-	Content       *[]Content
-	Nodes         *string
+	Content       *[]string
+	Nodes         *[]string
 	Disable       *bool
 	Shared        *bool
-	Preallocation *Preallocation
+	Preallocation *string
 }
 
-type Preallocation string
-
 const (
-	PreAllocationOff       Preallocation = "off"
-	PreAllocationMetadata  Preallocation = "metadata"
-	PreAllocationFallocate Preallocation = "fallocate"
-	PreAllocationFull      Preallocation = "full"
+	PreAllocationOff       string = "off"
+	PreAllocationMetadata  string = "metadata"
+	PreAllocationFallocate string = "fallocate"
+	PreAllocationFull      string = "full"
 )
 
 type PostResponse struct {
 	Storage string `json:"storage"`
-	Type    Type   `json:"type"`
+	Type    string `json:"type"`
 	Config  string `json:"config,omitempty"`
 }
 
@@ -46,10 +46,10 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	params.Add("type", string(p.StorageType))
 	params.Add("path", *p.Path)
 	if p.Content != nil {
-		params.Add("content", contentList(p.Content))
+		params.Add("content", listJoin(p.Content, ","))
 	}
 	if p.Nodes != nil {
-		params.Add("nodes", *p.Nodes)
+		params.Add("nodes", listJoin(p.Nodes, ","))
 	}
 	if p.Disable != nil {
 		params.Add("disable", fmt.Sprintf("%v", p.Disable))
@@ -60,22 +60,11 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	if p.Preallocation != nil {
 		params.Add("preallocation", string(*p.Preallocation))
 	}
+	fmt.Printf("---> %s\n\n", params.Encode())
 	apiURL.RawQuery = params.Encode()
 	resp, err := p.Client.Post(&apiURL)
 	if err != nil {
 		return nil, err
 	}
 	return &s, json.Unmarshal(resp, &s)
-}
-
-func contentList(l *[]Content) string {
-	contentList := ""
-	for i, c := range *l {
-		if i == len(*l) {
-			contentList += string(c)
-		} else {
-			contentList += string(c) + ","
-		}
-	}
-	return contentList
 }

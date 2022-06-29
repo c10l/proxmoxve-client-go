@@ -14,8 +14,10 @@ func TestPost(t *testing.T) {
 	req.StorageType = TypeDir
 	path := "/foo"
 	req.Path = &path
+	req.Nodes = &[]string{"pve"}
 	response, err := req.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 	assert.Equal(t, req.Storage, response.Storage)
+	assert.Equal(t, *req.Nodes, []string{"pve"})
 }

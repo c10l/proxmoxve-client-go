@@ -1,50 +1,62 @@
 package storage
 
 import (
-	"bytes"
+	"encoding/json"
 	"sort"
 	"strings"
 )
 
 const basePath = "/storage"
 
-type Type string
-
 const (
-	TypeBTRFS       Type = "btrfs"
-	TypeCephFS      Type = "cephfs"
-	TypeCIFS        Type = "cifs"
-	TypeDir         Type = "dir"
-	TypeGlusterFS   Type = "glusterfs"
-	TypeISCSI       Type = "iscsi"
-	TypeISCSIDirect Type = "iscsidirect"
-	TypeLVM         Type = "lvm"
-	TypeLVMThin     Type = "lvmthin"
-	TypeNFS         Type = "nfs"
-	TypePBS         Type = "pbs"
-	TypeRBD         Type = "rbd"
-	TypeZFS         Type = "zfs"
-	TypeZFSPool     Type = "zfspool"
+	TypeBTRFS       string = "btrfs"
+	TypeCephFS      string = "cephfs"
+	TypeCIFS        string = "cifs"
+	TypeDir         string = "dir"
+	TypeGlusterFS   string = "glusterfs"
+	TypeISCSI       string = "iscsi"
+	TypeISCSIDirect string = "iscsidirect"
+	TypeLVM         string = "lvm"
+	TypeLVMThin     string = "lvmthin"
+	TypeNFS         string = "nfs"
+	TypePBS         string = "pbs"
+	TypeRBD         string = "rbd"
+	TypeZFS         string = "zfs"
+	TypeZFSPool     string = "zfspool"
 )
 
-type Content string
-
 const (
-	ContentBackup   Content = "backup"
-	ContentImages   Content = "images"
-	ContentISO      Content = "iso"
-	ContentRootDir  Content = "rootdir"
-	ContentSnippets Content = "snippets"
-	ContentVZTmpl   Content = "vztmpl"
+	ContentBackup   string = "backup"
+	ContentImages   string = "images"
+	ContentISO      string = "iso"
+	ContentRootDir  string = "rootdir"
+	ContentSnippets string = "snippets"
+	ContentVZTmpl   string = "vztmpl"
 )
 
-type ContentList []Content
-
-func (l *ContentList) UnmarshalJSON(b []byte) error {
-	parts := strings.Split(string(bytes.Trim(b, `"`)), ",")
-	sort.Strings(parts)
-	for _, item := range parts {
-		*l = append(*l, Content(item))
+func listJoin(l *[]string, separator string) string {
+	contentList := ""
+	for i, c := range *l {
+		if i == len(*l) {
+			contentList += string(c)
+		} else {
+			contentList += string(c) + separator
+		}
 	}
-	return nil
+	return contentList
+}
+
+func rawListSplitAndSort(s json.RawMessage) []string {
+	slice := strings.Split(strings.Trim(string(s), `"`), ",")
+
+	// remove empty items
+	clearedSlice := []string{}
+	for _, v := range slice {
+		if v != "" {
+			clearedSlice = append(clearedSlice, v)
+		}
+	}
+
+	sort.Strings(clearedSlice)
+	return clearedSlice
 }
