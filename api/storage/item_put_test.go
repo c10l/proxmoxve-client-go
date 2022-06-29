@@ -24,7 +24,7 @@ func TestItemPut(t *testing.T) {
 		Content: &[]string{"images"},
 		Nodes:   &[]string{"foo", "bar"},
 		Disable: func() *bool { b := true; return &b }(),
-		// Shared:  func() *bool { b := true; return &b }(),
+		Shared:  func() *bool { b := true; return &b }(),
 	}.Do()
 	assert.NoError(t, err)
 	assert.Equal(t, req.Storage, putRest.Storage)

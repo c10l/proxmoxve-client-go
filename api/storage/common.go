@@ -67,3 +67,10 @@ func rawListSplitAndSort(s json.RawMessage) []string {
 	sort.Strings(clearedSlice)
 	return clearedSlice
 }
+
+func boolToInt(b bool) string {
+	if b {
+		return "1"
+	}
+	return "0"
+}

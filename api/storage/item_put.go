@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
 
 	"github.com/c10l/proxmoxve-client-go/api"
 )
@@ -42,14 +41,10 @@ func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
 		params.Add("nodes", listJoin(g.Nodes, ","))
 	}
 	if g.Disable != nil {
-		disableParam := "0"
-		if *g.Disable {
-			disableParam = "1"
-		}
-		params.Add("disable", disableParam)
+		params.Add("disable", boolToInt(*g.Disable))
 	}
 	if g.Shared != nil {
-		params.Add("shared", strconv.FormatBool(*g.Shared))
+		params.Add("shared", boolToInt(*g.Shared))
 	}
 	if g.Preallocation != nil {
 		params.Add("preallocation", string(*g.Preallocation))

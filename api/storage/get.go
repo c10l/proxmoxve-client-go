@@ -2,7 +2,9 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/c10l/proxmoxve-client-go/api"
@@ -19,7 +21,7 @@ type GetResponseStorage struct {
 	Digest       string
 	Path         string
 	PruneBackups string
-	Shared       int
+	Shared       bool
 	Storage      string
 	Type         string
 }
@@ -37,11 +39,16 @@ func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &helper); err != nil {
 		return err
 	}
+	shared, err := strconv.ParseBool(fmt.Sprint(helper.Shared))
+	if err != nil {
+		return err
+	}
+
 	r.Content = strings.Split(strings.Trim(string(helper.Content), `"`), ",")
 	r.Digest = helper.Digest
 	r.Path = helper.Path
 	r.PruneBackups = helper.PruneBackups
-	r.Shared = helper.Shared
+	r.Shared = shared
 	r.Storage = helper.Storage
 	r.Type = helper.Type
 	return nil

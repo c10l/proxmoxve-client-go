@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 
 	"github.com/c10l/proxmoxve-client-go/api"
@@ -45,10 +44,10 @@ func (p PostRequest) Do() (*PostResponse, error) {
 		params.Add("nodes", listJoin(p.Nodes, ","))
 	}
 	if p.Disable != nil {
-		params.Add("disable", fmt.Sprintf("%v", p.Disable))
+		params.Add("disable", boolToInt(*p.Disable))
 	}
 	if p.Shared != nil {
-		params.Add("shared", fmt.Sprintf("%v", p.Shared))
+		params.Add("shared", boolToInt(*p.Shared))
 	}
 	if p.Preallocation != nil {
 		params.Add("preallocation", string(*p.Preallocation))

@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/c10l/proxmoxve-client-go/api"
 )
@@ -33,8 +34,8 @@ func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 		Content       json.RawMessage `json:"content"`
 		Digest        string          `json:"digest"`
 		Nodes         json.RawMessage `json:"nodes"`
-		Disable       bool            `json:"disable"`
-		Shared        bool            `json:"shared"`
+		Disable       int             `json:"disable"`
+		Shared        int             `json:"shared"`
 		Preallocation string          `json:"preallocation"`
 		Path          string          `json:"path"`
 		PruneBackups  string          `json:"prune-backups"`
@@ -42,12 +43,21 @@ func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &helper); err != nil {
 		return err
 	}
+	disable, err := strconv.ParseBool(fmt.Sprint(helper.Disable))
+	if err != nil {
+		return err
+	}
+	shared, err := strconv.ParseBool(fmt.Sprint(helper.Shared))
+	if err != nil {
+		return err
+	}
+
 	r.Storage = helper.Storage
 	r.Type = helper.Type
 	r.Content = rawListSplitAndSort(helper.Content)
 	r.Digest = helper.Digest
-	r.Disable = helper.Disable
-	r.Shared = helper.Shared
+	r.Disable = disable
+	r.Shared = shared
 	r.Preallocation = helper.Preallocation
 	r.Path = helper.Path
 	r.PruneBackups = helper.PruneBackups
