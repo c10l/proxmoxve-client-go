@@ -24,13 +24,6 @@ type PostRequest struct {
 	Preallocation *string
 }
 
-const (
-	PreAllocationOff       string = "off"
-	PreAllocationMetadata  string = "metadata"
-	PreAllocationFallocate string = "fallocate"
-	PreAllocationFull      string = "full"
-)
-
 type PostResponse struct {
 	Storage string `json:"storage"`
 	Type    string `json:"type"`

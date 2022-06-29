@@ -34,6 +34,13 @@ const (
 	ContentVZTmpl   string = "vztmpl"
 )
 
+const (
+	PreAllocationOff       string = "off"
+	PreAllocationMetadata  string = "metadata"
+	PreAllocationFallocate string = "fallocate"
+	PreAllocationFull      string = "full"
+)
+
 func listJoin(l *[]string, separator string) string {
 	contentList := ""
 	for i, c := range *l {
