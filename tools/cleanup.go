@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/c10l/proxmoxve-client-go/api2"
+	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/api/storage"
 )
 
 func main() {
@@ -28,7 +29,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 
 	tokenID := os.Getenv("PROXMOXVE_TEST_TOKEN_ID")
 	secret := os.Getenv("PROXMOXVE_TEST_SECRET")
-	c, err := api2.NewClient(
+	c, err := api.NewClient(
 		baseURL,
 		tokenID,
 		secret,
@@ -39,26 +40,15 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		os.Exit(1)
 	}
 
-	poolList, err := c.GetPoolsList()
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-	for _, item := range poolList {
-		fmt.Printf("Deleting Pool %s\n", item.PoolID)
-		if c.DeletePool(item.PoolID) != nil {
-			fmt.Println(err)
-		}
-	}
-
-	storageList, err := c.GetStorageList()
+	storageList, err := storage.GetRequest{Client: c}.Do()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 	for _, item := range *storageList {
 		fmt.Printf("Deleting Storage %s\n", item.Storage)
-		if c.DeleteStorage(item.Storage) != nil {
+		delReq := storage.ItemDeleteRequest{Client: c, Storage: item.Storage}
+		if delReq.Do() != nil {
 			fmt.Println(err)
 		}
 	}
