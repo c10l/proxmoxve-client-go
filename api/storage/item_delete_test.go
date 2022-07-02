@@ -10,10 +10,10 @@ import (
 
 func TestItemDelete(t *testing.T) {
 	req := PostRequest{Client: test.APITestClient()}
-	req.Storage = "a" + rand.String(10)
+	req.Storage = "pmvetest_" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"
-	req.Path = &path
+	req.DirPath = &path
 	_, err := req.Do()
 	assert.NoError(t, err)
 

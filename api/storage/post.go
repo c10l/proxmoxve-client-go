@@ -14,12 +14,19 @@ type PostRequest struct {
 	Storage     string
 	StorageType string
 
-	// Optional fields
-	Path          *string
+	// Dir fields
+	DirPath   *string
+	DirShared *bool
+
+	// NFS fields
+	NFSMountOptions *string
+	NFSServer       *string
+	NFSExport       *string
+
+	// Global optional fields
 	Content       *[]string
 	Nodes         *[]string
 	Disable       *bool
-	Shared        *bool
 	Preallocation *string
 }
 
@@ -36,7 +43,9 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	params := url.Values{}
 	params.Add("storage", p.Storage)
 	params.Add("type", string(p.StorageType))
-	params.Add("path", *p.Path)
+	if p.DirPath != nil {
+		params.Add("path", string(*p.DirPath))
+	}
 	if p.Content != nil {
 		params.Add("content", listJoin(p.Content, ","))
 	}
@@ -46,11 +55,20 @@ func (p PostRequest) Do() (*PostResponse, error) {
 	if p.Disable != nil {
 		params.Add("disable", boolToInt(*p.Disable))
 	}
-	if p.Shared != nil {
-		params.Add("shared", boolToInt(*p.Shared))
+	if p.DirShared != nil {
+		params.Add("shared", boolToInt(*p.DirShared))
 	}
 	if p.Preallocation != nil {
 		params.Add("preallocation", string(*p.Preallocation))
+	}
+	if p.NFSMountOptions != nil {
+		params.Add("options", string(*p.NFSMountOptions))
+	}
+	if p.NFSServer != nil {
+		params.Add("server", string(*p.NFSServer))
+	}
+	if p.NFSExport != nil {
+		params.Add("export", string(*p.NFSExport))
 	}
 	apiURL.RawQuery = params.Encode()
 	resp, err := p.Client.Post(&apiURL)

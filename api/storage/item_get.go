@@ -15,30 +15,34 @@ type ItemGetRequest struct {
 }
 
 type ItemGetResponse struct {
-	Storage       string
-	Type          string
-	Content       []string
-	Digest        string
-	Nodes         []string
-	Disable       bool
-	Shared        bool
-	Preallocation string
-	Path          string
-	PruneBackups  string
+	Storage         string
+	Type            string
+	Content         []string
+	Digest          string
+	Nodes           []string
+	Disable         bool
+	Shared          bool
+	Preallocation   string
+	Path            string
+	PruneBackups    string
+	NFSMountOptions string
+	NFSServer       string
 }
 
 func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 	var helper struct {
-		Storage       string          `json:"storage"`
-		Type          string          `json:"type"`
-		Content       json.RawMessage `json:"content"`
-		Digest        string          `json:"digest"`
-		Nodes         json.RawMessage `json:"nodes"`
-		Disable       int             `json:"disable"`
-		Shared        int             `json:"shared"`
-		Preallocation string          `json:"preallocation"`
-		Path          string          `json:"path"`
-		PruneBackups  string          `json:"prune-backups"`
+		Storage         string          `json:"storage"`
+		Type            string          `json:"type"`
+		Content         json.RawMessage `json:"content"`
+		Digest          string          `json:"digest"`
+		Nodes           json.RawMessage `json:"nodes"`
+		Disable         int             `json:"disable"`
+		Shared          int             `json:"shared"`
+		Preallocation   string          `json:"preallocation"`
+		Path            string          `json:"path"`
+		PruneBackups    string          `json:"prune-backups"`
+		NFSMountOptions string          `json:"options"`
+		NFSServer       string          `json:"server"`
 	}
 	if err := json.Unmarshal(b, &helper); err != nil {
 		return err
@@ -62,6 +66,8 @@ func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 	r.Path = helper.Path
 	r.PruneBackups = helper.PruneBackups
 	r.Nodes = rawListSplitAndSort(helper.Nodes)
+	r.NFSMountOptions = helper.NFSMountOptions
+	r.NFSServer = helper.NFSServer
 	return nil
 }
 

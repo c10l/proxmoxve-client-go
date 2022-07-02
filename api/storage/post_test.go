@@ -8,12 +8,12 @@ import (
 	"k8s.io/apimachinery/pkg/util/rand"
 )
 
-func TestPost(t *testing.T) {
+func TestPostDir(t *testing.T) {
 	req := PostRequest{Client: test.APITestClient()}
-	req.Storage = "a" + rand.String(10)
+	req.Storage = "pmvetest_dir_" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"
-	req.Path = &path
+	req.DirPath = &path
 	req.Nodes = &[]string{"pve"}
 	response, err := req.Do()
 	assert.NoError(t, err)
@@ -22,16 +22,30 @@ func TestPost(t *testing.T) {
 	assert.Equal(t, *req.Nodes, []string{"pve"})
 }
 
-func TestPostSharedAndDisable(t *testing.T) {
-	req := PostRequest{Client: test.APITestClient(), Shared: ptrTo(true), Disable: ptrTo(true)}
-	req.Storage = "a" + rand.String(10)
+func TestPostDirSharedAndDisable(t *testing.T) {
+	req := PostRequest{Client: test.APITestClient(), DirShared: ptrTo(true), Disable: ptrTo(true)}
+	req.Storage = "pmvetest_dir_" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"
-	req.Path = &path
+	req.DirPath = &path
 	req.Nodes = &[]string{"pve"}
 	response, err := req.Do()
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
+}
+
+func TestPostNFS(t *testing.T) {
+	req := PostRequest{Client: test.APITestClient()}
+	req.Storage = "pmvetest_nfs_" + rand.String(10)
+	req.StorageType = TypeNFS
+	req.NFSMountOptions = ptrTo("vers=4.2")
+	req.NFSServer = ptrTo("100.100.100.100")
+	req.NFSExport = ptrTo("/mnt/nfs_export/path")
+	req.Nodes = &[]string{"pve"}
+	req.Disable = ptrTo(true)
+	resp, err := req.Do()
+	assert.NoError(t, err)
+	assert.Contains(t, resp.Storage, "pmvetest_nfs_")
 }
 
 func ptrTo[T any](t T) *T {

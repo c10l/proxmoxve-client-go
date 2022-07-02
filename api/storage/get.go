@@ -24,6 +24,8 @@ type GetResponseStorage struct {
 	Shared       bool
 	Storage      string
 	Type         string
+	NFSVersion   string
+	NFSServer    string
 }
 
 func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
@@ -35,6 +37,8 @@ func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
 		Shared       int             `json:"shared"`
 		Storage      string          `json:"storage"`
 		Type         string          `json:"type"`
+		NFSVersion   string          `json:"nfs_version"`
+		NFSServer    string          `json:"server"`
 	}
 	if err := json.Unmarshal(b, &helper); err != nil {
 		return err
@@ -51,6 +55,8 @@ func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
 	r.Shared = shared
 	r.Storage = helper.Storage
 	r.Type = helper.Type
+	r.NFSVersion = helper.NFSVersion
+	r.NFSServer = helper.NFSServer
 	return nil
 }
 

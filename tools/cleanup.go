@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/c10l/proxmoxve-client-go/api"
 	"github.com/c10l/proxmoxve-client-go/api/storage"
@@ -46,6 +47,9 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		os.Exit(1)
 	}
 	for _, item := range *storageList {
+		if !strings.HasPrefix(item.Storage, "pmvetest_") {
+			continue
+		}
 		fmt.Printf("Deleting Storage %s\n", item.Storage)
 		delReq := storage.ItemDeleteRequest{Client: c, Storage: item.Storage}
 		if delReq.Do() != nil {

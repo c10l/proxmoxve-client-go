@@ -11,12 +11,13 @@ import (
 type ItemPutRequest struct {
 	Client *api.Client
 
-	Storage       string
-	Content       *[]string
-	Nodes         *[]string
-	Disable       *bool
-	Shared        *bool
-	Preallocation *string
+	Storage         string
+	Content         *[]string
+	Nodes           *[]string
+	Disable         *bool
+	Shared          *bool
+	Preallocation   *string
+	NFSMountOptions *string
 }
 
 type ItemPutResponse struct {
@@ -48,6 +49,9 @@ func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
 	}
 	if g.Preallocation != nil {
 		params.Add("preallocation", string(*g.Preallocation))
+	}
+	if g.NFSMountOptions != nil {
+		params.Add("options", string(*g.NFSMountOptions))
 	}
 	apiURL.RawQuery = params.Encode()
 	resp, err := g.Client.Put(&apiURL)

@@ -11,9 +11,9 @@ import (
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
 		Client:      test.APITestClient(),
-		Storage:     "a" + rand.String(10),
+		Storage:     "pmvetest_" + rand.String(10),
 		StorageType: TypeDir,
-		Path:        func() *string { s := "/foo"; return &s }(),
+		DirPath:     func() *string { s := "/foo"; return &s }(),
 		Nodes:       &[]string{"pve"},
 	}
 	_, err := req.Do()
