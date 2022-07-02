@@ -27,6 +27,7 @@ type ItemGetResponse struct {
 	PruneBackups    string
 	NFSMountOptions string
 	NFSServer       string
+	NFSExport       string
 }
 
 func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
@@ -43,6 +44,7 @@ func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 		PruneBackups    string          `json:"prune-backups"`
 		NFSMountOptions string          `json:"options"`
 		NFSServer       string          `json:"server"`
+		NFSExport       string          `json:"export"`
 	}
 	if err := json.Unmarshal(b, &helper); err != nil {
 		return err
@@ -68,6 +70,7 @@ func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 	r.Nodes = rawListSplitAndSort(helper.Nodes)
 	r.NFSMountOptions = helper.NFSMountOptions
 	r.NFSServer = helper.NFSServer
+	r.NFSExport = helper.NFSExport
 	return nil
 }
 
