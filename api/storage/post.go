@@ -47,10 +47,10 @@ func (p PostRequest) Do() (*PostResponse, error) {
 		params.Add("path", string(*p.DirPath))
 	}
 	if p.Content != nil {
-		params.Add("content", listJoin(p.Content, ","))
+		params.Add("content", stringSliceJoin(p.Content, ","))
 	}
 	if p.Nodes != nil {
-		params.Add("nodes", listJoin(p.Nodes, ","))
+		params.Add("nodes", stringSliceJoin(p.Nodes, ","))
 	}
 	if p.Disable != nil {
 		params.Add("disable", boolToInt(*p.Disable))

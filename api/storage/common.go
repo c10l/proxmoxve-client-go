@@ -41,7 +41,7 @@ const (
 	PreAllocationFull      string = "full"
 )
 
-func listJoin(l *[]string, separator string) string {
+func stringSliceJoin(l *[]string, separator string) string {
 	contentList := ""
 	for i, c := range *l {
 		if i == len(*l)-1 {

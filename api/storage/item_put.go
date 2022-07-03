@@ -36,10 +36,10 @@ func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
 	apiURL.Path += basePath + "/" + g.Storage
 	params := url.Values{}
 	if g.Content != nil {
-		params.Add("content", listJoin(g.Content, ","))
+		params.Add("content", stringSliceJoin(g.Content, ","))
 	}
 	if g.Nodes != nil {
-		params.Add("nodes", listJoin(g.Nodes, ","))
+		params.Add("nodes", stringSliceJoin(g.Nodes, ","))
 	}
 	if g.Disable != nil {
 		params.Add("disable", boolToInt(*g.Disable))
