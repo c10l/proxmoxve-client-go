@@ -30,7 +30,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 
 	tokenID := os.Getenv("PROXMOXVE_TEST_TOKEN_ID")
 	secret := os.Getenv("PROXMOXVE_TEST_SECRET")
-	c, err := api.NewClient(
+	c, err := api.NewAPITokenClient(
 		baseURL,
 		tokenID,
 		secret,
@@ -56,4 +56,19 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 			fmt.Println(err)
 		}
 	}
+	// clusterAcmeAccountList, err := account.GetRequest{Client: c}.Do()
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	os.Exit(1)
+	// }
+	// for _, item := range *clusterAcmeAccountList {
+	// 	if !strings.HasPrefix(item.Name, "pmvetest_") {
+	// 		continue
+	// 	}
+	// 	fmt.Printf("Deleting Cluster ACME Account %s\n", item.Name)
+	// 	delReq := account.ItemDeleteRequest{Client: c, Name: item.Name}
+	// 	if delReq.Do() != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// }
 }
