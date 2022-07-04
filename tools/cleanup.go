@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/api/cluster/acme/account"
 	"github.com/c10l/proxmoxve-client-go/api/storage"
 )
 
@@ -30,7 +31,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 
 	tokenID := os.Getenv("PROXMOXVE_TEST_TOKEN_ID")
 	secret := os.Getenv("PROXMOXVE_TEST_SECRET")
-	c, err := api.NewAPITokenClient(
+	apiTokenClient, err := api.NewAPITokenClient(
 		baseURL,
 		tokenID,
 		secret,
@@ -41,7 +42,18 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		os.Exit(1)
 	}
 
-	storageList, err := storage.GetRequest{Client: c}.Do()
+	ticketClient, err := api.NewTicketClient(
+		baseURL,
+		os.Getenv("PROXMOXVE_TEST_USER"),
+		os.Getenv("PROXMOXVE_TEST_PASS"),
+		true,
+	)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	storageList, err := storage.GetRequest{Client: apiTokenClient}.Do()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -51,24 +63,24 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 			continue
 		}
 		fmt.Printf("Deleting Storage %s\n", item.Storage)
-		delReq := storage.ItemDeleteRequest{Client: c, Storage: item.Storage}
+		delReq := storage.ItemDeleteRequest{Client: apiTokenClient, Storage: item.Storage}
 		if delReq.Do() != nil {
 			fmt.Println(err)
 		}
 	}
-	// clusterAcmeAccountList, err := account.GetRequest{Client: c}.Do()
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// 	os.Exit(1)
-	// }
-	// for _, item := range *clusterAcmeAccountList {
-	// 	if !strings.HasPrefix(item.Name, "pmvetest_") {
-	// 		continue
-	// 	}
-	// 	fmt.Printf("Deleting Cluster ACME Account %s\n", item.Name)
-	// 	delReq := account.ItemDeleteRequest{Client: c, Name: item.Name}
-	// 	if delReq.Do() != nil {
-	// 		fmt.Println(err)
-	// 	}
-	// }
+	clusterAcmeAccountList, err := account.GetRequest{Client: apiTokenClient}.Do()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	for _, item := range *clusterAcmeAccountList {
+		if !strings.HasPrefix(item.Name, "pmvetest_") {
+			continue
+		}
+		fmt.Printf("Deleting Cluster ACME Account %s\n", item.Name)
+		delReq := account.ItemDeleteRequest{Client: ticketClient, Name: item.Name}
+		if delReq.Do() != nil {
+			fmt.Println(err)
+		}
+	}
 }
