@@ -200,3 +200,21 @@ func (c Client) GetItem(g ItemGetter, basePath, id string) ([]byte, error) {
 	apiURL.Path += basePath + "/" + id
 	return c.Get(&apiURL)
 }
+
+type ItemPutter interface {
+	PutItem() ([]byte, error)
+	ParseParams(*url.URL) error
+}
+
+func (c Client) PutItem(p ItemPutter, basePath, id string) ([]byte, error) {
+	if id == "" {
+		return nil, fmt.Errorf("item ID is required")
+	}
+
+	apiURL := *c.ApiURL
+	apiURL.Path += basePath + "/" + id
+	if err := p.ParseParams(&apiURL); err != nil {
+		return nil, err
+	}
+	return c.Put(&apiURL)
+}

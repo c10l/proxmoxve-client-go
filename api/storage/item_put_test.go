@@ -25,7 +25,7 @@ func TestItemPut(t *testing.T) {
 		Nodes:   &[]string{"foo", "bar"},
 		Disable: func() *bool { b := true; return &b }(),
 		Shared:  func() *bool { b := true; return &b }(),
-	}.Do()
+	}.Put()
 	assert.NoError(t, err)
 	assert.Equal(t, req.Storage, putRest.Storage)
 	assert.Equal(t, TypeDir, putRest.Type)

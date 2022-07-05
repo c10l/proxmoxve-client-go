@@ -26,14 +26,24 @@ type ItemPutResponse struct {
 	Config  string `json:"config,omitempty"`
 }
 
-func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
-	if g.Storage == "" {
-		return nil, fmt.Errorf("storage is required")
-	}
+// PutItem satisfies the ItemPutter interface.
+// Not to be used directly. Use Put() instead.
+func (g ItemPutRequest) PutItem() ([]byte, error) {
+	return g.Client.PutItem(g, basePath, g.Storage)
+}
 
-	var r ItemPutResponse
-	apiURL := *g.Client.ApiURL
-	apiURL.Path += basePath + "/" + g.Storage
+func (g ItemPutRequest) Put() (*ItemPutResponse, error) {
+	item, err := g.PutItem()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(ItemPutResponse)
+	return resp, json.Unmarshal(item, resp)
+}
+
+// ParseParams satisfies the ItemPutter interface.
+// Not to be used directly. Use Put() instead.
+func (g ItemPutRequest) ParseParams(apiURL *url.URL) error {
 	params := url.Values{}
 	if g.Content != nil {
 		params.Add("content", stringSliceJoin(g.Content, ","))
@@ -53,10 +63,9 @@ func (g ItemPutRequest) Do() (*ItemPutResponse, error) {
 	if g.NFSMountOptions != nil {
 		params.Add("options", string(*g.NFSMountOptions))
 	}
-	apiURL.RawQuery = params.Encode()
-	resp, err := g.Client.Put(&apiURL)
-	if err != nil {
-		return nil, err
+	if len(params) == 0 {
+		return fmt.Errorf("no params")
 	}
-	return &r, json.Unmarshal(resp, &r)
+	apiURL.RawQuery = params.Encode()
+	return nil
 }
