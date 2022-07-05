@@ -25,8 +25,13 @@ func TestPost(t *testing.T) {
 
 	assert.Eventually(t, func() bool {
 		accountList, err := GetRequest{Client: test.APITokenTestClient()}.Do()
-		assert.NoError(t, err)
-		assert.NotNil(t, accountList)
-		return assert.Contains(t, *accountList, GetResponseAccount{Name: *req.Name})
-	}, 5*time.Second, 500*time.Millisecond)
+		for _, i := range *accountList {
+			if i.Name == *req.Name {
+				assert.NoError(t, err)
+				assert.NotNil(t, accountList)
+				return true
+			}
+		}
+		return false
+	}, 5*time.Second, 500*time.Millisecond, err)
 }

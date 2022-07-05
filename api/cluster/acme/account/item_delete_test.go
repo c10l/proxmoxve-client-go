@@ -23,8 +23,8 @@ func TestItemDelete(t *testing.T) {
 
 	assert.Eventually(t, func() bool {
 		err = ItemDeleteRequest{Client: test.TicketTestClient(), Name: *req.Name}.Do()
-		return assert.NoError(t, err)
-	}, 5*time.Second, 500*time.Millisecond)
+		return err == nil
+	}, 5*time.Second, 500*time.Millisecond, err)
 
 	// _, err = ItemGetRequest{Client: test.APITokenTestClient(), Account: req.Account}.Do()
 	// assert.ErrorContains(t, err, "does not exist")
