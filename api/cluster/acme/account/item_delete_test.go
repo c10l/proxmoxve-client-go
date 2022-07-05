@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/c10l/proxmoxve-client-go/api/test"
 	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
@@ -12,7 +11,7 @@ import (
 
 func TestItemDelete(t *testing.T) {
 	req := PostRequest{
-		Client:    test.TicketTestClient(),
+		Client:    helpers.TicketTestClient(),
 		Name:      helpers.PtrTo("pmvetest_acme_" + rand.String(10)),
 		Contact:   "foobar@baz.com",
 		Directory: helpers.PtrTo("https://acme-staging-v02.api.letsencrypt.org/directory"),
@@ -22,7 +21,7 @@ func TestItemDelete(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Eventually(t, func() bool {
-		err = ItemDeleteRequest{Client: test.TicketTestClient(), Name: *req.Name}.Delete()
+		err = ItemDeleteRequest{Client: helpers.TicketTestClient(), Name: *req.Name}.Delete()
 		return err == nil
 	}, 5*time.Second, 500*time.Millisecond, err)
 

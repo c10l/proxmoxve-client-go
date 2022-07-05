@@ -3,14 +3,13 @@ package storage
 import (
 	"testing"
 
-	"github.com/c10l/proxmoxve-client-go/api/test"
 	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
 
 func TestPostDir(t *testing.T) {
-	req := PostRequest{Client: test.APITokenTestClient()}
+	req := PostRequest{Client: helpers.APITokenTestClient()}
 	req.Storage = "pmvetest_dir_" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"
@@ -24,7 +23,7 @@ func TestPostDir(t *testing.T) {
 }
 
 func TestPostDirSharedAndDisable(t *testing.T) {
-	req := PostRequest{Client: test.APITokenTestClient(), DirShared: helpers.PtrTo(true), Disable: helpers.PtrTo(true)}
+	req := PostRequest{Client: helpers.APITokenTestClient(), DirShared: helpers.PtrTo(true), Disable: helpers.PtrTo(true)}
 	req.Storage = "pmvetest_dir_" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"
@@ -36,7 +35,7 @@ func TestPostDirSharedAndDisable(t *testing.T) {
 }
 
 func TestPostNFS(t *testing.T) {
-	req := PostRequest{Client: test.APITokenTestClient()}
+	req := PostRequest{Client: helpers.APITokenTestClient()}
 	req.Storage = "pmvetest_nfs_" + rand.String(10)
 	req.StorageType = TypeNFS
 	req.NFSMountOptions = helpers.PtrTo("vers=4.2")

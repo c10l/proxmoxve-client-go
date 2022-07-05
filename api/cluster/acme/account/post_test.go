@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/c10l/proxmoxve-client-go/api/test"
 	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
@@ -12,7 +11,7 @@ import (
 
 func TestPost(t *testing.T) {
 	req := PostRequest{
-		Client:    test.TicketTestClient(),
+		Client:    helpers.TicketTestClient(),
 		Name:      helpers.PtrTo("pmvetest_acme_" + rand.String(10)),
 		Contact:   "foobar@baz.com",
 		Directory: helpers.PtrTo("https://acme-staging-v02.api.letsencrypt.org/directory"),
@@ -24,7 +23,7 @@ func TestPost(t *testing.T) {
 	assert.Contains(t, *resp, "UPID:pve:")
 
 	assert.Eventually(t, func() bool {
-		accountList, err := GetRequest{Client: test.APITokenTestClient()}.Get()
+		accountList, err := GetRequest{Client: helpers.APITokenTestClient()}.Get()
 		for _, i := range *accountList {
 			if i.Name == *req.Name {
 				assert.NoError(t, err)

@@ -3,7 +3,6 @@ package storage
 import (
 	"testing"
 
-	"github.com/c10l/proxmoxve-client-go/api/test"
 	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
@@ -11,7 +10,7 @@ import (
 
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
-		Client:      test.APITokenTestClient(),
+		Client:      helpers.APITokenTestClient(),
 		Storage:     "pmvetest_" + rand.String(10),
 		StorageType: TypeDir,
 		DirPath:     func() *string { s := "/foo"; return &s }(),
@@ -20,7 +19,7 @@ func TestItemGet(t *testing.T) {
 	_, err := req.Post()
 	assert.NoError(t, err)
 
-	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
+	resp, err := ItemGetRequest{Client: helpers.APITokenTestClient(), Storage: req.Storage}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, req.Storage, resp.Storage)
@@ -32,7 +31,7 @@ func TestItemGet(t *testing.T) {
 
 func TestItemNFSGet(t *testing.T) {
 	req := PostRequest{
-		Client:      test.APITokenTestClient(),
+		Client:      helpers.APITokenTestClient(),
 		Storage:     "pmvetest_" + rand.String(10),
 		StorageType: TypeNFS,
 		NFSExport:   helpers.PtrTo("/foo"),
@@ -42,7 +41,7 @@ func TestItemNFSGet(t *testing.T) {
 	_, err := req.Post()
 	assert.NoError(t, err)
 
-	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
+	resp, err := ItemGetRequest{Client: helpers.APITokenTestClient(), Storage: req.Storage}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, req.Storage, resp.Storage)

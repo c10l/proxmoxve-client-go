@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/c10l/proxmoxve-client-go/api/test"
+	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
@@ -60,7 +60,7 @@ func TestUnmarshalGetResponseStorage(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	storageList, err := GetRequest{Client: test.APITokenTestClient()}.Get()
+	storageList, err := GetRequest{Client: helpers.APITokenTestClient()}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, storageList)
 }
