@@ -232,3 +232,17 @@ func (c Client) PostItem(p Poster, basePath string) ([]byte, error) {
 	}
 	return c.Post(&apiURL)
 }
+
+type Getter interface {
+	GetAll() ([]byte, error)
+	ParseParams(*url.URL) error
+}
+
+func (c Client) GetAll(g Getter, basePath string) ([]byte, error) {
+	apiURL := *c.ApiURL
+	apiURL.Path += basePath
+	if err := g.ParseParams(&apiURL); err != nil {
+		return nil, err
+	}
+	return c.Get(&apiURL)
+}

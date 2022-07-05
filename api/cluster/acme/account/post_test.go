@@ -24,7 +24,7 @@ func TestPost(t *testing.T) {
 	assert.Contains(t, *resp, "UPID:pve:")
 
 	assert.Eventually(t, func() bool {
-		accountList, err := GetRequest{Client: test.APITokenTestClient()}.Do()
+		accountList, err := GetRequest{Client: test.APITokenTestClient()}.Get()
 		for _, i := range *accountList {
 			if i.Name == *req.Name {
 				assert.NoError(t, err)

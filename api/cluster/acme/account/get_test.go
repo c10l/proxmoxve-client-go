@@ -8,7 +8,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
-	accountList, err := GetRequest{Client: test.APITokenTestClient()}.Do()
+	accountList, err := GetRequest{Client: test.APITokenTestClient()}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, accountList)
 }

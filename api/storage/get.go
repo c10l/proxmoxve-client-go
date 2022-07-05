@@ -54,18 +54,28 @@ func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (g GetRequest) Do() (*GetResponse, error) {
-	var s GetResponse
-	apiURL := *g.Client.ApiURL
-	apiURL.Path += basePath
+func (g GetRequest) Get() (*GetResponse, error) {
+	items, err := g.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(GetResponse)
+	return resp, json.Unmarshal(items, resp)
+}
+
+// GetAll implements the Getter interface.
+// Not to be used directly. Use Get() instead.
+func (g GetRequest) GetAll() ([]byte, error) {
+	return g.Client.GetAll(g, basePath)
+}
+
+// ParsePath implements the Getter interface.
+// Not to be used directly. Use Get() instead.
+func (g GetRequest) ParseParams(apiURL *url.URL) error {
 	if g.Type != "" {
 		params := url.Values{}
 		params.Add("type", string(g.Type))
 		apiURL.RawQuery = params.Encode()
 	}
-	resp, err := g.Client.Get(&apiURL)
-	if err != nil {
-		return nil, err
-	}
-	return &s, json.Unmarshal(resp, &s)
+	return nil
 }

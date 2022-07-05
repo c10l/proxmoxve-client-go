@@ -53,7 +53,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		os.Exit(1)
 	}
 
-	storageList, err := storage.GetRequest{Client: apiTokenClient}.Do()
+	storageList, err := storage.GetRequest{Client: apiTokenClient}.Get()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -68,7 +68,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 			fmt.Println(err)
 		}
 	}
-	clusterAcmeAccountList, err := account.GetRequest{Client: apiTokenClient}.Do()
+	clusterAcmeAccountList, err := account.GetRequest{Client: apiTokenClient}.Get()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
