@@ -6,87 +6,41 @@ This will be used in a Terraform provider so from this point on I will prioritis
 
 Instructions for running tests will be added in the future.
 
-Current progress:
+## Testing
 
-    ( ) access
-    ( ) cluster
-    ( ) nodes
-        [ ] get
-        ( ) {node}
-            [ ] get
-            ( ) apt
-                [ ] get
-                ( ) changelog
-                    [ ] get
-                ( ) repositories
-                    [ ] get
-                    [ ] post
-                    [ ] put
-                ( ) update
-                    [ ] get
-                    [ ] post
-                ( ) versions
-                    [ ] get
-                ( ) capabilities
-                    [ ] get
-                    ( ) qemu
-                        [ ] get
-                        ( ) cpu
-                            [ ] get
-                        ( ) machines
-                            [ ] get
-                ( ) ceph
-                ( ) certificates
-                ( ) disks
-                ( ) firewall
-                ( ) hardware
-                ( ) lxc
-                ( ) network
-                ( ) qemu
-                ( ) replication
-                ( ) scan
-                ( ) sdn
-                ( ) services
-                ( ) storage
-                ( ) tasks
-                ( ) vzdump
-                ( ) appinfo
-                ( ) config
-                ( ) dns
-                ( ) execute
-                ( ) hosts
-                ( ) journal
-                ( ) migrateall
-                ( ) netstat
-                ( ) query-url-metadata
-                ( ) report
-                ( ) rrd
-                ( ) rrddata
-                ( ) spiceshell
-                ( ) startall
-                ( ) status
-                ( ) stopall
-                ( ) subscription
-                ( ) syslog
-                ( ) termproxy
-                ( ) time
-                ( ) version
-                ( ) vncshell
-                ( ) vncwebsocket
-                ( ) wakeonlan
-    (o) pools
-        [/] get
-        [/] post
-        (o) {poolid}
-            [/] get
-            [/] put
-            [/] delete
-    (o) storage
-        [/] get
-        [/] post
-        (o) {storage}
-            [/] get
-            [/] put
-            [/] delete
-    (o) version
-        [/] get
+There's a little set up needed before the test suite can be run.
+
+### Proxmox server
+
+You need a Proxmox VE server running somewhere. I suggest a throwaway VM since we'll be creating and deleting resources, adding a trusted CA and other things that shouldn't ever be done in a production system.
+
+Create an API token for the `root@pam` user.
+
+Export the following environment variables:
+
+```bash
+export PROXMOXVE_TEST_BASE_URL="https://<pmve_host>:<port>"
+export PROXMOXVE_TEST_TOKEN_ID="<root_token_id>"
+export PROXMOXVE_TEST_SECRET="<root_token_secret>"
+export PROXMOXVE_TEST_TLS_INSECURE=true
+
+# This is a safeguard. It's used my `make cleanup` and means you are aware it might delete things it shouldn't. Please run this against a throwaway VM.
+export PROXMOXVE_TEST_URL_CLEANUP="https://<pmve_host>:<port>"
+
+# Some endpoints require this, e.g. ACME account creation. See https://forum.proxmox.com/threads/acme-api-endpoint-403-permission-check-failed-user-root-pam-despite-user-being-root-pam.111745/
+export PROXMOXVE_TEST_USER="root@pam"
+export PROXMOXVE_TEST_PASS="<root_password>"
+```
+
+### Run Pebble
+
+Install and run [Let's Encrypt Pebble](https://github.com/letsencrypt/pebble) on the host.
+
+```bash
+apt-get update
+apt-get -y install golang git
+git clone https://github.com/letsencrypt/pebble.git
+cd pebble
+go install ./cmd/pebble
+~/go/bin/pebble -config ./test/config/pebble-config.json
+```
