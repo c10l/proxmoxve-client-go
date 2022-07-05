@@ -218,3 +218,17 @@ func (c Client) PutItem(p ItemPutter, basePath, id string) ([]byte, error) {
 	}
 	return c.Put(&apiURL)
 }
+
+type Poster interface {
+	PostItem() ([]byte, error)
+	ParseParams(*url.URL) error
+}
+
+func (c Client) PostItem(p Poster, basePath string) ([]byte, error) {
+	apiURL := *c.ApiURL
+	apiURL.Path += basePath
+	if err := p.ParseParams(&apiURL); err != nil {
+		return nil, err
+	}
+	return c.Post(&apiURL)
+}

@@ -18,7 +18,7 @@ func TestItemDelete(t *testing.T) {
 		Directory: helpers.PtrTo("https://acme-staging-v02.api.letsencrypt.org/directory"),
 		TOSurl:    helpers.PtrTo("https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf"),
 	}
-	_, err := req.Do()
+	_, err := req.Post()
 	assert.NoError(t, err)
 
 	assert.Eventually(t, func() bool {

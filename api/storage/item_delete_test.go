@@ -14,7 +14,7 @@ func TestItemDelete(t *testing.T) {
 	req.StorageType = TypeDir
 	path := "/foo"
 	req.DirPath = &path
-	_, err := req.Do()
+	_, err := req.Post()
 	assert.NoError(t, err)
 
 	err = ItemDeleteRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Delete()

@@ -17,7 +17,7 @@ func TestItemGet(t *testing.T) {
 		DirPath:     func() *string { s := "/foo"; return &s }(),
 		Nodes:       &[]string{"pve"},
 	}
-	_, err := req.Do()
+	_, err := req.Post()
 	assert.NoError(t, err)
 
 	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
@@ -39,7 +39,7 @@ func TestItemNFSGet(t *testing.T) {
 		NFSServer:   helpers.PtrTo("1.2.3.4"),
 		Disable:     helpers.PtrTo(true),
 	}
-	_, err := req.Do()
+	_, err := req.Post()
 	assert.NoError(t, err)
 
 	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()

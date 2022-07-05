@@ -36,10 +36,24 @@ type PostResponse struct {
 	Config  string `json:"config,omitempty"`
 }
 
-func (p PostRequest) Do() (*PostResponse, error) {
-	var s PostResponse
-	apiURL := *p.Client.ApiURL
-	apiURL.Path += basePath
+func (p PostRequest) Post() (*PostResponse, error) {
+	item, err := p.PostItem()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(PostResponse)
+	return resp, json.Unmarshal(item, resp)
+}
+
+// PostItem satisfies the ItemPutter interface.
+// Not to be used directly. Use Post() instead.
+func (p PostRequest) PostItem() ([]byte, error) {
+	return p.Client.PostItem(p, basePath)
+}
+
+// ParseParams satisfies the ItemPutter interface.
+// Not to be used directly. Use Post() instead.
+func (p PostRequest) ParseParams(apiURL *url.URL) error {
 	params := url.Values{}
 	params.Add("storage", p.Storage)
 	params.Add("type", string(p.StorageType))
@@ -71,9 +85,5 @@ func (p PostRequest) Do() (*PostResponse, error) {
 		params.Add("export", string(*p.NFSExport))
 	}
 	apiURL.RawQuery = params.Encode()
-	resp, err := p.Client.Post(&apiURL)
-	if err != nil {
-		return nil, err
-	}
-	return &s, json.Unmarshal(resp, &s)
+	return nil
 }

@@ -2,7 +2,6 @@ package account
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 
 	"github.com/c10l/proxmoxve-client-go/api"
@@ -20,13 +19,24 @@ type PostRequest struct {
 
 type PostResponse string
 
-func (g PostRequest) Do() (*PostResponse, error) {
-	if g.Client.UserPass == nil {
-		return nil, fmt.Errorf("POST to /cluster/acme/account requires username=root@pam and password")
+func (g PostRequest) Post() (*PostResponse, error) {
+	item, err := g.PostItem()
+	if err != nil {
+		return nil, err
 	}
-	var s PostResponse
-	apiURL := *g.Client.ApiURL
-	apiURL.Path += basePath
+	resp := new(PostResponse)
+	return resp, json.Unmarshal(item, resp)
+}
+
+// PostItem satisfies the ItemPutter interface.
+// Not to be used directly. Use Post() instead.
+func (g PostRequest) PostItem() ([]byte, error) {
+	return g.Client.PostItem(g, basePath)
+}
+
+// ParseParams satisfies the ItemPutter interface.
+// Not to be used directly. Use Post() instead.
+func (g PostRequest) ParseParams(apiURL *url.URL) error {
 	params := url.Values{}
 	params.Add("contact", g.Contact)
 	if g.Directory != nil {
@@ -39,9 +49,5 @@ func (g PostRequest) Do() (*PostResponse, error) {
 		params.Add("tos_url", *g.TOSurl)
 	}
 	apiURL.RawQuery = params.Encode()
-	resp, err := g.Client.Post(&apiURL)
-	if err != nil {
-		return nil, err
-	}
-	return &s, json.Unmarshal(resp, &s)
+	return nil
 }

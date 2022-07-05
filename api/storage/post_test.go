@@ -16,7 +16,7 @@ func TestPostDir(t *testing.T) {
 	path := "/foo"
 	req.DirPath = &path
 	req.Nodes = &[]string{"pve"}
-	response, err := req.Do()
+	response, err := req.Post()
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 	assert.Equal(t, req.Storage, response.Storage)
@@ -30,7 +30,7 @@ func TestPostDirSharedAndDisable(t *testing.T) {
 	path := "/foo"
 	req.DirPath = &path
 	req.Nodes = &[]string{"pve"}
-	response, err := req.Do()
+	response, err := req.Post()
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 }
@@ -44,7 +44,7 @@ func TestPostNFS(t *testing.T) {
 	req.NFSExport = helpers.PtrTo("/mnt/nfs_export/path")
 	req.Nodes = &[]string{"pve"}
 	req.Disable = helpers.PtrTo(true)
-	resp, err := req.Do()
+	resp, err := req.Post()
 	assert.NoError(t, err)
 	assert.Contains(t, resp.Storage, "pmvetest_nfs_")
 }

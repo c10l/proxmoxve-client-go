@@ -18,7 +18,7 @@ func TestPost(t *testing.T) {
 		Directory: helpers.PtrTo("https://acme-staging-v02.api.letsencrypt.org/directory"),
 		TOSurl:    helpers.PtrTo("https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf"),
 	}
-	resp, err := req.Do()
+	resp, err := req.Post()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Contains(t, *resp, "UPID:pve:")

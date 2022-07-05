@@ -15,7 +15,7 @@ func TestItemPut(t *testing.T) {
 		StorageType: TypeDir,
 		DirPath:     func() *string { s := "/foo"; return &s }(),
 	}
-	_, err := req.Do()
+	_, err := req.Post()
 	assert.NoError(t, err)
 
 	putRest, err := ItemPutRequest{
