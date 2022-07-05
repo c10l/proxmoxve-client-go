@@ -20,7 +20,7 @@ func TestItemGet(t *testing.T) {
 	_, err := req.Do()
 	assert.NoError(t, err)
 
-	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Do()
+	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, req.Storage, resp.Storage)
@@ -42,7 +42,7 @@ func TestItemNFSGet(t *testing.T) {
 	_, err := req.Do()
 	assert.NoError(t, err)
 
-	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Do()
+	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Equal(t, req.Storage, resp.Storage)

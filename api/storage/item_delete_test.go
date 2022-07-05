@@ -20,6 +20,6 @@ func TestItemDelete(t *testing.T) {
 	err = ItemDeleteRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Delete()
 	assert.NoError(t, err)
 
-	_, err = ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Do()
+	_, err = ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
 	assert.ErrorContains(t, err, "does not exist")
 }

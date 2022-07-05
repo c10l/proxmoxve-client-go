@@ -74,17 +74,17 @@ func (r *ItemGetResponse) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (g ItemGetRequest) Do() (*ItemGetResponse, error) {
-	if g.Storage == "" {
-		return nil, fmt.Errorf("storage is required")
-	}
+// GetItem satisfies the ItemGetter interface
+// Not to be used directly. Use Get() instead.
+func (g ItemGetRequest) GetItem() ([]byte, error) {
+	return g.Client.GetItem(g, basePath, g.Storage)
+}
 
-	var r ItemGetResponse
-	apiURL := *g.Client.ApiURL
-	apiURL.Path += basePath + "/" + g.Storage
-	resp, err := g.Client.Get(&apiURL)
+func (g ItemGetRequest) Get() (*ItemGetResponse, error) {
+	item, err := g.GetItem()
 	if err != nil {
 		return nil, err
 	}
-	return &r, json.Unmarshal(resp, &r)
+	resp := new(ItemGetResponse)
+	return resp, json.Unmarshal(item, resp)
 }

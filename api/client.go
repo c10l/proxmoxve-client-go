@@ -186,3 +186,17 @@ func (c *Client) DeleteItem(item ItemDeleter, basePath, id string) error {
 	_, err := c.Delete(&apiURL)
 	return err
 }
+
+type ItemGetter interface {
+	GetItem() ([]byte, error)
+}
+
+func (c Client) GetItem(g ItemGetter, basePath, id string) ([]byte, error) {
+	if id == "" {
+		return nil, fmt.Errorf("item ID is required")
+	}
+
+	apiURL := *c.ApiURL
+	apiURL.Path += basePath + "/" + id
+	return c.Get(&apiURL)
+}

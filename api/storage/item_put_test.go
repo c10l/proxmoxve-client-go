@@ -30,7 +30,7 @@ func TestItemPut(t *testing.T) {
 	assert.Equal(t, req.Storage, putRest.Storage)
 	assert.Equal(t, TypeDir, putRest.Type)
 
-	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Do()
+	resp, err := ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Get()
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Len(t, resp.Content, 1)
