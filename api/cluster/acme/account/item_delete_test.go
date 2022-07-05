@@ -22,7 +22,7 @@ func TestItemDelete(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Eventually(t, func() bool {
-		err = ItemDeleteRequest{Client: test.TicketTestClient(), Name: *req.Name}.Do()
+		err = ItemDeleteRequest{Client: test.TicketTestClient(), Name: *req.Name}.Delete()
 		return err == nil
 	}, 5*time.Second, 500*time.Millisecond, err)
 

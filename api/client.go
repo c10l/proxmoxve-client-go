@@ -171,3 +171,18 @@ func (c *Client) Delete(url *url.URL) ([]byte, error) {
 func (c *Client) Put(url *url.URL) ([]byte, error) {
 	return callAPI(c, http.MethodPut, url)
 }
+
+type ItemDeleter interface {
+	Delete() error
+}
+
+func (c *Client) DeleteItem(item ItemDeleter, basePath, id string) error {
+	if id == "" {
+		return fmt.Errorf("item ID is required")
+	}
+
+	apiURL := *c.ApiURL
+	apiURL.Path += basePath + "/" + id
+	_, err := c.Delete(&apiURL)
+	return err
+}

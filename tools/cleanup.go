@@ -64,7 +64,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		}
 		fmt.Printf("Deleting Storage %s\n", item.Storage)
 		delReq := storage.ItemDeleteRequest{Client: apiTokenClient, Storage: item.Storage}
-		if delReq.Do() != nil {
+		if delReq.Delete() != nil {
 			fmt.Println(err)
 		}
 	}
@@ -79,7 +79,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		}
 		fmt.Printf("Deleting Cluster ACME Account %s\n", item.Name)
 		delReq := account.ItemDeleteRequest{Client: ticketClient, Name: item.Name}
-		if delReq.Do() != nil {
+		if delReq.Delete() != nil {
 			fmt.Println(err)
 		}
 	}

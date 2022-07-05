@@ -17,7 +17,7 @@ func TestItemDelete(t *testing.T) {
 	_, err := req.Do()
 	assert.NoError(t, err)
 
-	err = ItemDeleteRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Do()
+	err = ItemDeleteRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Delete()
 	assert.NoError(t, err)
 
 	_, err = ItemGetRequest{Client: test.APITokenTestClient(), Storage: req.Storage}.Do()
