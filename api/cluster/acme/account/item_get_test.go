@@ -22,12 +22,10 @@ func TestItemGet(t *testing.T) {
 
 	var account *ItemGetResponse
 	assert.Eventually(t, func() bool {
-		var err error
 		account, err = ItemGetRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Get()
 		return assert.NoError(t, err) &&
 			assert.Equal(t, *req.Directory, account.Directory) &&
 			len(account.Account.Contact) > 0 &&
 			assert.Equal(t, "mailto:"+req.Contact, account.Account.Contact[0])
-	}, 10*time.Second, 500*time.Millisecond, err)
-
+	}, 5*time.Second, 500*time.Millisecond)
 }
