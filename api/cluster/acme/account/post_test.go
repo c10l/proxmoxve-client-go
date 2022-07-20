@@ -12,7 +12,7 @@ import (
 func TestPost(t *testing.T) {
 	req := PostRequest{
 		Client:    helpers.TicketTestClient(),
-		Name:      helpers.PtrTo("pmvetest_acme_" + rand.String(10)),
+		Name:      "pmvetest_acme_" + rand.String(10),
 		Contact:   "foobar@baz.com",
 		Directory: helpers.PtrTo("https://127.0.0.1:14000/dir"),
 		TOSurl:    helpers.PtrTo("https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf"),
@@ -25,7 +25,7 @@ func TestPost(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		accountList, err := GetRequest{Client: helpers.APITokenTestClient()}.Get()
 		for _, i := range *accountList {
-			if i.Name == *req.Name {
+			if i.Name == req.Name {
 				assert.NoError(t, err)
 				assert.NotNil(t, accountList)
 				return true

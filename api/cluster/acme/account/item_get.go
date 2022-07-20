@@ -9,7 +9,7 @@ import (
 type ItemGetRequest struct {
 	Client *api.Client
 
-	Name *string
+	Name string
 }
 
 type ItemGetResponse struct {
@@ -38,10 +38,10 @@ type ItemGetResponseAccountKey struct {
 // Not to be used directly. Use Get() instead.
 func (g ItemGetRequest) GetItem() ([]byte, error) {
 	var name string
-	if g.Name == nil {
+	if g.Name == "" {
 		name = "default"
 	} else {
-		name = *g.Name
+		name = g.Name
 	}
 	return g.Client.GetItem(g, basePath, name)
 }

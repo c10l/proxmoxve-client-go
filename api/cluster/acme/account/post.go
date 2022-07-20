@@ -9,9 +9,9 @@ import (
 
 type PostRequest struct {
 	Client    *api.Client
+	Name      string  `json:"name"`
 	Contact   string  `json:"contact"`
 	Directory *string `json:"directory"`
-	Name      *string `json:"name"`
 
 	// TOSurl is the URL of CA TermsOfService - setting this indicates agreement.
 	TOSurl *string `json:"tos_url"`
@@ -38,12 +38,10 @@ func (g PostRequest) PostItem() ([]byte, error) {
 // Not to be used directly. Use Post() instead.
 func (g PostRequest) ParseParams(apiURL *url.URL) error {
 	params := url.Values{}
+	params.Add("name", g.Name)
 	params.Add("contact", g.Contact)
 	if g.Directory != nil {
 		params.Add("directory", *g.Directory)
-	}
-	if g.Name != nil {
-		params.Add("name", *g.Name)
 	}
 	if g.TOSurl != nil {
 		params.Add("tos_url", *g.TOSurl)
