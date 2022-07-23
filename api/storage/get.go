@@ -15,7 +15,6 @@ type GetRequest struct {
 	Type   string
 }
 
-type GetResponse []GetResponseStorage
 type GetResponseStorage struct {
 	Content      []string
 	Digest       string
@@ -54,13 +53,13 @@ func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (g GetRequest) Get() (*GetResponse, error) {
+func (g GetRequest) Get() ([]GetResponseStorage, error) {
 	items, err := g.GetAll()
 	if err != nil {
 		return nil, err
 	}
-	resp := new(GetResponse)
-	return resp, json.Unmarshal(items, resp)
+	var resp []GetResponseStorage
+	return resp, json.Unmarshal(items, &resp)
 }
 
 // GetAll implements the Getter interface.

@@ -58,7 +58,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	for _, item := range *storageList {
+	for _, item := range storageList {
 		if !strings.HasPrefix(item.Storage, "pmvetest_") {
 			continue
 		}
@@ -73,7 +73,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	for _, item := range *clusterAcmeAccountList {
+	for _, item := range clusterAcmeAccountList {
 		if !strings.HasPrefix(item.Name, "pmvetest_") {
 			continue
 		}
