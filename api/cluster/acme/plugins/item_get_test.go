@@ -11,9 +11,10 @@ import (
 
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
-		Client: helpers.APITokenTestClient(),
-		ID:     "pmvetest_acme_" + rand.String(10),
-		Type:   "standalone",
+		Client:  helpers.APITokenTestClient(),
+		ID:      "pmvetest_acme_" + rand.String(10),
+		Type:    "standalone",
+		Disable: helpers.PtrTo(helpers.IntBool(true)),
 	}
 	err := req.Post()
 	assert.NoError(t, err)

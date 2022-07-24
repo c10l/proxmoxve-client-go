@@ -36,7 +36,7 @@ func TestItemNFSGet(t *testing.T) {
 		StorageType: TypeNFS,
 		NFSExport:   helpers.PtrTo("/foo"),
 		NFSServer:   helpers.PtrTo("1.2.3.4"),
-		Disable:     helpers.PtrTo(true),
+		Disable:     helpers.PtrTo(helpers.IntBool(true)),
 	}
 	_, err := req.Post()
 	assert.NoError(t, err)

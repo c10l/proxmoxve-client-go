@@ -2,9 +2,11 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 
 	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/helpers"
 )
 
 type PostRequest struct {
@@ -16,7 +18,7 @@ type PostRequest struct {
 
 	// Dir fields
 	DirPath   *string
-	DirShared *bool
+	DirShared *helpers.IntBool
 
 	// NFS fields
 	NFSMountOptions *string
@@ -26,7 +28,7 @@ type PostRequest struct {
 	// Global optional fields
 	Content       *[]string
 	Nodes         *[]string
-	Disable       *bool
+	Disable       *helpers.IntBool
 	Preallocation *string
 }
 
@@ -67,10 +69,10 @@ func (p PostRequest) ParseParams(apiURL *url.URL) error {
 		params.Add("nodes", stringSliceJoin(p.Nodes, ","))
 	}
 	if p.Disable != nil {
-		params.Add("disable", boolToInt(*p.Disable))
+		params.Add("disable", fmt.Sprintf("%d", p.Disable.Int()))
 	}
 	if p.DirShared != nil {
-		params.Add("shared", boolToInt(*p.DirShared))
+		params.Add("shared", fmt.Sprintf("%d", p.DirShared.Int()))
 	}
 	if p.Preallocation != nil {
 		params.Add("preallocation", string(*p.Preallocation))

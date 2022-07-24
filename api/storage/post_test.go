@@ -23,7 +23,11 @@ func TestPostDir(t *testing.T) {
 }
 
 func TestPostDirSharedAndDisable(t *testing.T) {
-	req := PostRequest{Client: helpers.APITokenTestClient(), DirShared: helpers.PtrTo(true), Disable: helpers.PtrTo(true)}
+	req := PostRequest{
+		Client:    helpers.APITokenTestClient(),
+		DirShared: helpers.PtrTo(helpers.IntBool(true)),
+		Disable:   helpers.PtrTo(helpers.IntBool(true)),
+	}
 	req.Storage = "pmvetest_dir_" + rand.String(10)
 	req.StorageType = TypeDir
 	path := "/foo"
@@ -42,7 +46,7 @@ func TestPostNFS(t *testing.T) {
 	req.NFSServer = helpers.PtrTo("100.100.100.100")
 	req.NFSExport = helpers.PtrTo("/mnt/nfs_export/path")
 	req.Nodes = &[]string{"pve"}
-	req.Disable = helpers.PtrTo(true)
+	req.Disable = helpers.PtrTo(helpers.IntBool(true))
 	resp, err := req.Post()
 	assert.NoError(t, err)
 	assert.Contains(t, resp.Storage, "pmvetest_nfs_")

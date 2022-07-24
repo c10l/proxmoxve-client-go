@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/helpers"
 )
 
 type ItemPutRequest struct {
@@ -14,8 +15,8 @@ type ItemPutRequest struct {
 	Storage         string
 	Content         *[]string
 	Nodes           *[]string
-	Disable         *bool
-	Shared          *bool
+	Disable         *helpers.IntBool
+	Shared          *helpers.IntBool
 	Preallocation   *string
 	NFSMountOptions *string
 }
@@ -52,10 +53,10 @@ func (g ItemPutRequest) ParseParams(apiURL *url.URL) error {
 		params.Add("nodes", stringSliceJoin(g.Nodes, ","))
 	}
 	if g.Disable != nil {
-		params.Add("disable", boolToInt(*g.Disable))
+		params.Add("disable", fmt.Sprintf("%d", g.Disable.Int()))
 	}
 	if g.Shared != nil {
-		params.Add("shared", boolToInt(*g.Shared))
+		params.Add("shared", fmt.Sprintf("%d", g.Shared.Int()))
 	}
 	if g.Preallocation != nil {
 		params.Add("preallocation", string(*g.Preallocation))
