@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/c10l/proxmoxve-client-go/helpers"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
@@ -36,7 +37,7 @@ func TestItemNFSGet(t *testing.T) {
 		StorageType: TypeNFS,
 		NFSExport:   helpers.PtrTo("/foo"),
 		NFSServer:   helpers.PtrTo("1.2.3.4"),
-		Disable:     helpers.PtrTo(helpers.IntBool(true)),
+		Disable:     helpers.PtrTo(types.PVEBool(true)),
 	}
 	_, err := req.Post()
 	assert.NoError(t, err)

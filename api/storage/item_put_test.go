@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/c10l/proxmoxve-client-go/helpers"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
@@ -23,8 +24,8 @@ func TestItemPut(t *testing.T) {
 		Storage: req.Storage,
 		Content: &[]string{"images"},
 		Nodes:   &[]string{"foo", "bar"},
-		Disable: helpers.PtrTo(helpers.IntBool(true)),
-		Shared:  helpers.PtrTo(helpers.IntBool(false)),
+		Disable: helpers.PtrTo(types.PVEBool(true)),
+		Shared:  helpers.PtrTo(types.PVEBool(false)),
 	}.Put()
 	assert.NoError(t, err)
 	assert.Equal(t, req.Storage, putRest.Storage)

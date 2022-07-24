@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/c10l/proxmoxve-client-go/api"
-	"github.com/c10l/proxmoxve-client-go/helpers"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 )
 
 type ItemGetRequest struct {
@@ -13,12 +13,12 @@ type ItemGetRequest struct {
 }
 
 type ItemGetResponse struct {
-	Digest          string          `json:"digest"`
-	Plugin          string          `json:"plugin"`
-	Type            string          `json:"type"`
-	Disable         helpers.IntBool `json:"disable"`
-	ValidationDelay int             `json:"validation-delay"`
-	Nodes           string          `json:"nodes"`
+	Digest          string        `json:"digest"`
+	Plugin          string        `json:"plugin"`
+	Type            string        `json:"type"`
+	Disable         types.PVEBool `json:"disable"`
+	ValidationDelay int           `json:"validation-delay"`
+	Nodes           string        `json:"nodes"`
 }
 
 // GetItem satisfies the ItemGetter interface

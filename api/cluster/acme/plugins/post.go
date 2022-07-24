@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/c10l/proxmoxve-client-go/api"
-	"github.com/c10l/proxmoxve-client-go/helpers"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 )
 
 type PostRequest struct {
@@ -17,7 +17,7 @@ type PostRequest struct {
 	// Optional attributes
 	API             *string
 	Data            *string
-	Disable         *helpers.IntBool
+	Disable         *types.PVEBool
 	Nodes           *[]string
 	ValidationDelay *int
 }
@@ -46,7 +46,7 @@ func (g PostRequest) ParseParams(apiURL *url.URL) error {
 		params.Add("data", *g.Data)
 	}
 	if g.Disable != nil {
-		params.Add("disable", fmt.Sprintf("%d", g.Disable.Int()))
+		params.Add("disable", g.Disable.ToAPIRequestParam())
 	}
 	if g.Nodes != nil {
 		params.Add("nodes", strings.Join(*g.Nodes, ","))
