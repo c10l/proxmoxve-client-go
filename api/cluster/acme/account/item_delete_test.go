@@ -32,7 +32,4 @@ func TestItemDelete(t *testing.T) {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Get()
 		return strings.Contains(err.Error(), fmt.Sprintf("ACME account config file '%s' does not exist.", req.Name))
 	}, 5*time.Second, 500*time.Millisecond)
-
-	// _, err = ItemGetRequest{Client: test.APITokenTestClient(), Account: req.Account}.Do()
-	// assert.ErrorContains(t, err, "does not exist")
 }
