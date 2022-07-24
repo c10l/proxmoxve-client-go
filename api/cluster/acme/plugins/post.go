@@ -26,7 +26,7 @@ func (g PostRequest) Post() error {
 	return err
 }
 
-// PostItem satisfies the ItemPutter interface.
+// PostItem satisfies the ItemPoster interface.
 // Not to be used directly. Use Post() instead.
 func (g PostRequest) PostItem() ([]byte, error) {
 	return g.Client.PostItem(g, basePath)
