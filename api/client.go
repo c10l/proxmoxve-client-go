@@ -11,7 +11,7 @@ import (
 )
 
 type Client struct {
-	ApiURL      *url.URL
+	APIurl      *url.URL
 	APIToken    *APIToken
 	UserPass    *UserPass
 	TLSInsecure bool
@@ -47,7 +47,7 @@ func NewAPITokenClient(baseURL, tokenID, secret string, tlsInsecure bool) (*Clie
 	apiURL.Path += "/api2/json"
 
 	client := &Client{
-		ApiURL:      apiURL,
+		APIurl:      apiURL,
 		APIToken:    &APIToken{TokenID: tokenID, Secret: secret},
 		TLSInsecure: tlsInsecure,
 		HTTPClient:  httpClient,
@@ -96,7 +96,7 @@ func NewTicketClient(baseURL, user, pass string, tlsInsecure bool) (*Client, err
 	}
 
 	client := &Client{
-		ApiURL: apiURL,
+		APIurl: apiURL,
 		UserPass: &UserPass{
 			User:   user,
 			Pass:   pass,
@@ -181,7 +181,7 @@ func (c *Client) DeleteItem(item ItemDeleter, basePath, id string) error {
 		return fmt.Errorf("item ID is required")
 	}
 
-	apiURL := *c.ApiURL
+	apiURL := *c.APIurl
 	apiURL.Path += basePath + "/" + id
 	_, err := c.Delete(&apiURL)
 	return err
@@ -196,7 +196,7 @@ func (c Client) GetItem(g ItemGetter, basePath, id string) ([]byte, error) {
 		return nil, fmt.Errorf("item ID is required")
 	}
 
-	apiURL := *c.ApiURL
+	apiURL := *c.APIurl
 	apiURL.Path += basePath + "/" + id
 	return c.Get(&apiURL)
 }
@@ -211,7 +211,7 @@ func (c Client) PutItem(p ItemPutter, basePath, id string) ([]byte, error) {
 		return nil, fmt.Errorf("item ID is required")
 	}
 
-	apiURL := *c.ApiURL
+	apiURL := *c.APIurl
 	apiURL.Path += basePath + "/" + id
 	if err := p.ParseParams(&apiURL); err != nil {
 		return nil, err
@@ -225,7 +225,7 @@ type Poster interface {
 }
 
 func (c Client) PostItem(p Poster, basePath string) ([]byte, error) {
-	apiURL := *c.ApiURL
+	apiURL := *c.APIurl
 	apiURL.Path += basePath
 	if err := p.ParseParams(&apiURL); err != nil {
 		return nil, err
@@ -239,7 +239,7 @@ type Getter interface {
 }
 
 func (c Client) GetAll(g Getter, basePath string) ([]byte, error) {
-	apiURL := *c.ApiURL
+	apiURL := *c.APIurl
 	apiURL.Path += basePath
 	if err := g.ParseParams(&apiURL); err != nil {
 		return nil, err

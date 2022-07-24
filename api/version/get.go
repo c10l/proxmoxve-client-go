@@ -30,7 +30,7 @@ type GetResponse struct {
 
 func (g GetRequest) Do() (*GetResponse, error) {
 	var v GetResponse
-	apiURL := *g.Client.ApiURL
+	apiURL := *g.Client.APIurl
 	apiURL.Path += basePath
 	resp, err := g.Client.Get(&apiURL)
 	if err != nil {
