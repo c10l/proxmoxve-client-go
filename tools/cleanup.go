@@ -7,6 +7,7 @@ import (
 
 	"github.com/c10l/proxmoxve-client-go/api"
 	"github.com/c10l/proxmoxve-client-go/api/cluster/acme/account"
+	"github.com/c10l/proxmoxve-client-go/api/cluster/acme/plugins"
 	"github.com/c10l/proxmoxve-client-go/api/storage"
 )
 
@@ -68,6 +69,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 			fmt.Println(err)
 		}
 	}
+
 	clusterAcmeAccountList, err := account.GetRequest{Client: apiTokenClient}.Get()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -79,6 +81,22 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		}
 		fmt.Printf("Deleting Cluster ACME Account %s\n", item.Name)
 		delReq := account.ItemDeleteRequest{Client: ticketClient, Name: item.Name}
+		if delReq.Delete() != nil {
+			fmt.Println(err)
+		}
+	}
+
+	clusterAcmePluginsList, err := plugins.GetRequest{Client: apiTokenClient}.Get()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	for _, item := range clusterAcmePluginsList {
+		if !strings.HasPrefix(item.Plugin, "pmvetest_") {
+			continue
+		}
+		fmt.Printf("Deleting Cluster ACME Plugin %s\n", item.Plugin)
+		delReq := plugins.ItemDeleteRequest{Client: ticketClient, ID: item.Plugin}
 		if delReq.Delete() != nil {
 			fmt.Println(err)
 		}
