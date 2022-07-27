@@ -178,7 +178,7 @@ type ItemDeleter interface {
 
 func (c *Client) DeleteItem(item ItemDeleter, basePath, id string) error {
 	if id == "" {
-		return fmt.Errorf("item ID is required")
+		return fmt.Errorf("Client.DeleteItem: item ID is required")
 	}
 
 	apiURL := *c.APIurl
@@ -193,7 +193,7 @@ type ItemGetter interface {
 
 func (c Client) GetItem(g ItemGetter, basePath, id string) ([]byte, error) {
 	if id == "" {
-		return nil, fmt.Errorf("item ID is required")
+		return nil, fmt.Errorf("Client.GetItem: item ID is required")
 	}
 
 	apiURL := *c.APIurl
@@ -208,7 +208,7 @@ type ItemPutter interface {
 
 func (c Client) PutItem(p ItemPutter, basePath, id string) ([]byte, error) {
 	if id == "" {
-		return nil, fmt.Errorf("item ID is required")
+		return nil, fmt.Errorf("Client.PutItem: item ID is required")
 	}
 
 	apiURL := *c.APIurl
