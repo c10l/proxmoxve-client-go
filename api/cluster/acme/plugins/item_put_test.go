@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"encoding/base64"
 	"testing"
 	"time"
 
@@ -14,7 +15,9 @@ func TestItemPut(t *testing.T) {
 	postReq := PostRequest{
 		Client: helpers.TicketTestClient(),
 		ID:     "pmvetest_acme_" + rand.String(10),
-		Type:   "standalone",
+		Type:   "dns",
+		API:    helpers.PtrTo("lua"),
+		Data:   helpers.PtrTo(base64.StdEncoding.EncodeToString([]byte("test"))),
 	}
 	err := postReq.Post()
 	assert.NoError(t, err)
@@ -35,5 +38,7 @@ func TestItemPut(t *testing.T) {
 	item, err := ItemGetRequest{Client: helpers.APITokenTestClient(), ID: postReq.ID}.Get()
 	assert.NoError(t, err)
 	assert.Equal(t, true, bool(item.Disable))
-	assert.Equal(t, "node1,node2", item.Nodes)
+	assert.Equal(t, "node1,node2", *item.Nodes)
+	assert.Equal(t, "lua", *item.API)
+	assert.Equal(t, "test", *item.Data)
 }

@@ -17,8 +17,10 @@ type ItemGetResponse struct {
 	Plugin          string        `json:"plugin"`
 	Type            string        `json:"type"`
 	Disable         types.PVEBool `json:"disable"`
-	ValidationDelay int           `json:"validation-delay"`
-	Nodes           string        `json:"nodes"`
+	ValidationDelay *int          `json:"validation-delay,omitempty"`
+	Nodes           *string       `json:"nodes,omitempty"`
+	API             *string       `json:"api,omitempty"`
+	Data            *string       `json:"data,omitempty"`
 }
 
 // GetItem satisfies the ItemGetter interface
