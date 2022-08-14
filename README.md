@@ -42,5 +42,13 @@ apt-get -y install golang git
 git clone https://github.com/letsencrypt/pebble.git
 cd pebble
 go install ./cmd/pebble
+cp ~/pebble/test/certs/pebble.minica.pem /usr/local/share/ca-certificates/pebble.minica.crt
+update-ca-certificates --fresh
 ~/go/bin/pebble -config ./test/config/pebble-config.json
+```
+
+Then, create the ACME account:
+
+```
+pvesh create /cluster/acme/account --name "pebble" --contact "foo@bar.com" --directory "https://localhost:14000/dir" --tos_url "foobar"
 ```
