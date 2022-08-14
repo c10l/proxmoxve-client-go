@@ -25,6 +25,7 @@ func TestItemDelete(t *testing.T) {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Get()
 		return err == nil
 	}, eventuallyTimeout, 500*time.Millisecond)
+	assert.NoError(t, err)
 
 	err = ItemDeleteRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Delete()
 	assert.NoError(t, err)

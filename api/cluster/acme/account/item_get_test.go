@@ -28,4 +28,8 @@ func TestItemGet(t *testing.T) {
 			len(account.Account.Contact) > 0 &&
 			"mailto:"+req.Contact == account.Account.Contact[0]
 	}, eventuallyTimeout, 500*time.Millisecond)
+	assert.NoError(t, err)
+	assert.Equal(t, *req.Directory, account.Directory)
+	assert.Greater(t, len(account.Account.Contact), 0)
+	assert.Equal(t, "mailto:"+req.Contact, account.Account.Contact[0])
 }
