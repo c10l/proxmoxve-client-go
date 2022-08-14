@@ -32,7 +32,7 @@ func TestItemPut(t *testing.T) {
 			}
 		}
 		return false
-	}, 5*time.Second, 500*time.Millisecond, err)
+	}, eventuallyTimeout, 500*time.Millisecond, err)
 
 	itemPutReq := ItemPutRequest{
 		Client:  helpers.TicketTestClient(),

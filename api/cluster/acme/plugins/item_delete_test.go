@@ -21,12 +21,12 @@ func TestItemDelete(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), ID: req.ID}.Get()
 		return err == nil
-	}, 5*time.Second, 500*time.Millisecond)
+	}, eventuallyTimeout, 500*time.Millisecond)
 
 	err = ItemDeleteRequest{Client: helpers.TicketTestClient(), ID: req.ID}.Delete()
 	assert.NoError(t, err)
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), ID: req.ID}.Get()
 		return assert.Contains(t, err.Error(), fmt.Sprintf("ACME plugin '%s' not defined", req.ID))
-	}, 5*time.Second, 500*time.Millisecond)
+	}, eventuallyTimeout, 500*time.Millisecond)
 }

@@ -32,5 +32,5 @@ func TestPost(t *testing.T) {
 			}
 		}
 		return false
-	}, 5*time.Second, 500*time.Millisecond, err)
+	}, eventuallyTimeout, 500*time.Millisecond, err)
 }

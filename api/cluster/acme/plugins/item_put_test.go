@@ -25,7 +25,7 @@ func TestItemPut(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		_, err := ItemGetRequest{Client: helpers.APITokenTestClient(), ID: postReq.ID}.Get()
 		return err == nil
-	}, 5*time.Second, 500*time.Millisecond, err)
+	}, eventuallyTimeout, 500*time.Millisecond, err)
 
 	itemPutReq := ItemPutRequest{
 		Client:  helpers.TicketTestClient(),
@@ -41,4 +41,36 @@ func TestItemPut(t *testing.T) {
 	assert.Equal(t, "node1,node2", *item.Nodes)
 	assert.Equal(t, "lua", *item.API)
 	assert.Equal(t, "test", *item.Data)
+}
+
+func TestItemPutDelete(t *testing.T) {
+	postReq := PostRequest{
+		Client: helpers.TicketTestClient(),
+		ID:     "pmvetest_acme_" + rand.String(10),
+		Type:   "dns",
+		API:    helpers.PtrTo("lua"),
+		Data:   helpers.PtrTo(base64.StdEncoding.EncodeToString([]byte("test"))),
+		Nodes:  helpers.PtrTo([]string{"node1", "node2"}),
+	}
+	err := postReq.Post()
+	assert.NoError(t, err)
+
+	assert.Eventually(t, func() bool {
+		_, err := ItemGetRequest{Client: helpers.APITokenTestClient(), ID: postReq.ID}.Get()
+		return err == nil
+	}, eventuallyTimeout, 500*time.Millisecond, err)
+
+	itemPutReq := ItemPutRequest{
+		Client:  helpers.TicketTestClient(),
+		ID:      postReq.ID,
+		Disable: helpers.PtrTo(types.PVEBool(true)),
+		Delete:  helpers.PtrTo("nodes,data"),
+	}
+	err = itemPutReq.Put()
+	assert.NoError(t, err)
+	item, err := ItemGetRequest{Client: helpers.APITokenTestClient(), ID: postReq.ID}.Get()
+	assert.NoError(t, err)
+	assert.Equal(t, true, bool(item.Disable))
+	assert.Nil(t, item.Nodes)
+	assert.Nil(t, item.Data)
 }

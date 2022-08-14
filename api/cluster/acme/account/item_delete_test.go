@@ -24,12 +24,12 @@ func TestItemDelete(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Get()
 		return err == nil
-	}, 5*time.Second, 500*time.Millisecond)
+	}, eventuallyTimeout, 500*time.Millisecond)
 
 	err = ItemDeleteRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Delete()
 	assert.NoError(t, err)
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Get()
 		return strings.Contains(err.Error(), fmt.Sprintf("ACME account config file '%s' does not exist.", req.Name))
-	}, 5*time.Second, 500*time.Millisecond)
+	}, eventuallyTimeout, 500*time.Millisecond)
 }

@@ -27,5 +27,5 @@ func TestItemGet(t *testing.T) {
 			*req.Directory == account.Directory &&
 			len(account.Account.Contact) > 0 &&
 			"mailto:"+req.Contact == account.Account.Contact[0]
-	}, 5*time.Second, 500*time.Millisecond)
+	}, eventuallyTimeout, 500*time.Millisecond)
 }

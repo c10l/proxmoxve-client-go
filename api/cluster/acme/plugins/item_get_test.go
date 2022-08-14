@@ -25,5 +25,5 @@ func TestItemGet(t *testing.T) {
 		return err == nil &&
 			plugin.Plugin == req.ID &&
 			plugin.Type == req.Type
-	}, 5*time.Second, 500*time.Millisecond, err)
+	}, eventuallyTimeout, 500*time.Millisecond, err)
 }
