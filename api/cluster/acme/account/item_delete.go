@@ -11,5 +11,5 @@ type ItemDeleteRequest struct {
 }
 
 func (r ItemDeleteRequest) Delete() error {
-	return r.Client.DeleteItem(r, basePath, r.Name)
+	return r.Client.DeleteItem(r, basePath, r.Name, "")
 }

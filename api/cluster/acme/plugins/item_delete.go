@@ -8,5 +8,5 @@ type ItemDeleteRequest struct {
 }
 
 func (g ItemDeleteRequest) Delete() error {
-	return g.Client.DeleteItem(g, basePath, g.ID)
+	return g.Client.DeleteItem(g, basePath, g.ID, "")
 }

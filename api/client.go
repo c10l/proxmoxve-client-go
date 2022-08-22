@@ -176,13 +176,20 @@ type ItemDeleter interface {
 	Delete() error
 }
 
-func (c *Client) DeleteItem(item ItemDeleter, basePath, id string) error {
+func (c *Client) DeleteItem(item ItemDeleter, basePath, id string, digest string) error {
 	if id == "" {
 		return fmt.Errorf("Client.DeleteItem: item ID is required")
 	}
 
 	apiURL := *c.APIurl
 	apiURL.Path += basePath + "/" + id
+
+	params := url.Values{}
+	if digest != "" {
+		params.Add("digest", digest)
+	}
+	apiURL.RawQuery = params.Encode()
+
 	_, err := c.Delete(&apiURL)
 	return err
 }
