@@ -8,6 +8,7 @@ import (
 	"github.com/c10l/proxmoxve-client-go/api"
 	"github.com/c10l/proxmoxve-client-go/api/cluster/acme/account"
 	"github.com/c10l/proxmoxve-client-go/api/cluster/acme/plugins"
+	"github.com/c10l/proxmoxve-client-go/api/cluster/firewall/aliases"
 	"github.com/c10l/proxmoxve-client-go/api/storage"
 )
 
@@ -97,6 +98,22 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		}
 		fmt.Printf("Deleting Cluster ACME Plugin %s\n", item.Plugin)
 		delReq := plugins.ItemDeleteRequest{Client: ticketClient, ID: item.Plugin}
+		if delReq.Delete() != nil {
+			fmt.Println(err)
+		}
+	}
+
+	clusterFirewallAliasesList, err := aliases.GetRequest{Client: apiTokenClient}.Get()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	for _, item := range clusterFirewallAliasesList {
+		if !strings.HasPrefix(item.Name, "pmvetest_") {
+			continue
+		}
+		fmt.Printf("Deleting Cluster Firewall Alias %s\n", item.Name)
+		delReq := aliases.ItemDeleteRequest{Client: apiTokenClient, Name: item.Name}
 		if delReq.Delete() != nil {
 			fmt.Println(err)
 		}
