@@ -2,4 +2,5 @@ package aliases
 
 import "time"
 
-const eventuallyTimeout = 30 * time.Second
+const testEventuallyTimeout = 30 * time.Second
+const testNamePrefix = "pmvetest_fw_aliases_"

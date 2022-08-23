@@ -11,8 +11,8 @@ import (
 
 func TestPost(t *testing.T) {
 	req := PostRequest{
-		Client: helpers.TicketTestClient(),
-		Name:   "pmvetest_fw_alias_" + rand.String(10),
+		Client: helpers.APITokenTestClient(),
+		Name:   testNamePrefix + rand.String(10),
 		CIDR:   "10.10.0.0/16",
 	}
 	err := req.Post()
@@ -28,5 +28,5 @@ func TestPost(t *testing.T) {
 			}
 		}
 		return false
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 }

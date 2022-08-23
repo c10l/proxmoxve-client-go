@@ -12,7 +12,7 @@ import (
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
 		Client: helpers.APITokenTestClient(),
-		Name:   "pmvetest_fw_alias_" + rand.String(10),
+		Name:   testNamePrefix + rand.String(10),
 		CIDR:   "1.1.1.0/24",
 	}
 	err := req.Post()
@@ -23,5 +23,5 @@ func TestItemGet(t *testing.T) {
 		return err == nil &&
 			alias.CIDR == req.CIDR &&
 			alias.IPVersion == 4
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 }
