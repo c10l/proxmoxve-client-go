@@ -12,7 +12,7 @@ import (
 func TestPost(t *testing.T) {
 	req := PostRequest{
 		Client: helpers.TicketTestClient(),
-		ID:     "pmvetest_acme_" + rand.String(10),
+		ID:     testNamePrefix + rand.String(10),
 		Type:   "standalone",
 	}
 	err := req.Post()
@@ -28,5 +28,5 @@ func TestPost(t *testing.T) {
 			}
 		}
 		return false
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 }

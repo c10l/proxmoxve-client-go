@@ -2,4 +2,5 @@ package account
 
 import "time"
 
-const eventuallyTimeout = 30 * time.Second
+const testEventuallyTimeout = 30 * time.Second
+const testNamePrefix = "pmvetest_acme_account_"

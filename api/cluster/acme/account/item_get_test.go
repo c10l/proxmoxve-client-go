@@ -12,7 +12,7 @@ import (
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
 		Client:    helpers.TicketTestClient(),
-		Name:      "pmvetest_acme_" + rand.String(10),
+		Name:      testNamePrefix + rand.String(10),
 		Contact:   "foobar@baz.com",
 		Directory: helpers.PtrTo("https://127.0.0.1:14000/dir"),
 		TOSurl:    helpers.PtrTo("https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf"),
@@ -27,7 +27,7 @@ func TestItemGet(t *testing.T) {
 			*req.Directory == account.Directory &&
 			len(account.Account.Contact) > 0 &&
 			"mailto:"+req.Contact == account.Account.Contact[0]
-	}, eventuallyTimeout, 500*time.Millisecond)
+	}, testEventuallyTimeout, 500*time.Millisecond)
 	assert.NoError(t, err)
 	assert.Equal(t, *req.Directory, account.Directory)
 	assert.Greater(t, len(account.Account.Contact), 0)

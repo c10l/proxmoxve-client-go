@@ -13,7 +13,7 @@ import (
 func TestItemDelete(t *testing.T) {
 	req := PostRequest{
 		Client: helpers.TicketTestClient(),
-		ID:     "pmvetest_acme_" + rand.String(10),
+		ID:     testNamePrefix + rand.String(10),
 		Type:   "standalone",
 	}
 	err := req.Post()
@@ -21,12 +21,12 @@ func TestItemDelete(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), ID: req.ID}.Get()
 		return err == nil
-	}, eventuallyTimeout, 500*time.Millisecond)
+	}, testEventuallyTimeout, 500*time.Millisecond)
 
 	err = ItemDeleteRequest{Client: helpers.TicketTestClient(), ID: req.ID}.Delete()
 	assert.NoError(t, err)
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), ID: req.ID}.Get()
 		return assert.Contains(t, err.Error(), fmt.Sprintf("ACME plugin '%s' not defined", req.ID))
-	}, eventuallyTimeout, 500*time.Millisecond)
+	}, testEventuallyTimeout, 500*time.Millisecond)
 }

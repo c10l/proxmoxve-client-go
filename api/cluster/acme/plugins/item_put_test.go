@@ -25,7 +25,7 @@ func TestItemPut(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		_, err := ItemGetRequest{Client: helpers.APITokenTestClient(), ID: postReq.ID}.Get()
 		return err == nil
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 
 	itemPutReq := ItemPutRequest{
 		Client:  helpers.TicketTestClient(),
@@ -46,7 +46,7 @@ func TestItemPut(t *testing.T) {
 func TestItemPutDelete(t *testing.T) {
 	postReq := PostRequest{
 		Client: helpers.TicketTestClient(),
-		ID:     "pmvetest_acme_" + rand.String(10),
+		ID:     testNamePrefix + rand.String(10),
 		Type:   "dns",
 		API:    helpers.PtrTo("lua"),
 		Data:   helpers.PtrTo(base64.StdEncoding.EncodeToString([]byte("test"))),
@@ -58,7 +58,7 @@ func TestItemPutDelete(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		_, err := ItemGetRequest{Client: helpers.APITokenTestClient(), ID: postReq.ID}.Get()
 		return err == nil
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 
 	itemPutReq := ItemPutRequest{
 		Client:  helpers.TicketTestClient(),

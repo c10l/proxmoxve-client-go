@@ -13,7 +13,7 @@ import (
 func TestItemGet(t *testing.T) {
 	req := PostRequest{
 		Client:  helpers.APITokenTestClient(),
-		ID:      "pmvetest_acme_" + rand.String(10),
+		ID:      testNamePrefix + rand.String(10),
 		Type:    "standalone",
 		Disable: helpers.PtrTo(types.PVEBool(true)),
 	}
@@ -25,5 +25,5 @@ func TestItemGet(t *testing.T) {
 		return err == nil &&
 			plugin.Plugin == req.ID &&
 			plugin.Type == req.Type
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 }

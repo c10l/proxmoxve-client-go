@@ -12,7 +12,7 @@ import (
 func TestItemPut(t *testing.T) {
 	postReq := PostRequest{
 		Client:    helpers.TicketTestClient(),
-		Name:      "pmvetest_acme_" + rand.String(10),
+		Name:      testNamePrefix + rand.String(10),
 		Contact:   "foobar@baz.com",
 		Directory: helpers.PtrTo("https://127.0.0.1:14000/dir"),
 		TOSurl:    helpers.PtrTo("https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf"),
@@ -32,7 +32,7 @@ func TestItemPut(t *testing.T) {
 			}
 		}
 		return false
-	}, eventuallyTimeout, 500*time.Millisecond, err)
+	}, testEventuallyTimeout, 500*time.Millisecond, err)
 
 	itemPutReq := ItemPutRequest{
 		Client:  helpers.TicketTestClient(),
