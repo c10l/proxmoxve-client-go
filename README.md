@@ -30,6 +30,7 @@ export PROXMOXVE_TEST_URL_CLEANUP="https://<pmve_host>:<port>"
 # Some endpoints require this, e.g. ACME account creation. See https://forum.proxmox.com/threads/acme-api-endpoint-403-permission-check-failed-user-root-pam-despite-user-being-root-pam.111745/
 export PROXMOXVE_TEST_USER="root@pam"
 export PROXMOXVE_TEST_PASS="<root_password>"
+export PROXMOXVE_TEST_TOTPSEED="<root_totp_seed>"
 ```
 
 ### Run Pebble

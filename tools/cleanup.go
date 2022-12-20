@@ -48,6 +48,7 @@ PROXMOXVE_TEST_URL_CLEANUP = %s
 		baseURL,
 		os.Getenv("PROXMOXVE_TEST_USER"),
 		os.Getenv("PROXMOXVE_TEST_PASS"),
+		os.Getenv("PROXMOXVE_TEST_TOTPSEED"),
 		true,
 	)
 	if err != nil {

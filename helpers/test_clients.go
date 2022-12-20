@@ -37,12 +37,14 @@ func TicketTestClient() *api.Client {
 	baseURL := os.Getenv("PROXMOXVE_TEST_BASE_URL")
 	user := os.Getenv("PROXMOXVE_TEST_USER")
 	pass := os.Getenv("PROXMOXVE_TEST_PASS")
+	totpSeed := os.Getenv("PROXMOXVE_TEST_TOTPSEED")
 	if baseURL == "" || user == "" || pass == "" {
 		fmt.Println("test environment not setup")
 		fmt.Println("set environment variables:")
 		fmt.Println("  - PROXMOXVE_TEST_BASE_URL")
 		fmt.Println("  - PROXMOXVE_TEST_USER")
 		fmt.Println("  - PROXMOXVE_TEST_PASS")
+		fmt.Println("  - PROXMOXVE_TEST_TOTPSEED (optional)")
 		os.Exit(1)
 	}
 	var err error
@@ -50,6 +52,7 @@ func TicketTestClient() *api.Client {
 		baseURL,
 		user,
 		pass,
+		totpSeed,
 		true,
 	)
 	if err != nil {
