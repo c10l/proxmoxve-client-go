@@ -24,7 +24,7 @@ func NewAPITokenClient(baseURL, tokenID, secret string, tlsInsecure bool) (*Clie
 	apiURL.Path += "/api2/json"
 
 	client := &Client{
-		APIurl:      apiURL,
+		APIurl:      *apiURL,
 		APIToken:    &APIToken{TokenID: tokenID, Secret: secret},
 		TLSInsecure: tlsInsecure,
 		HTTPClient:  httpClient,

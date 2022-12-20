@@ -9,17 +9,18 @@ import (
 )
 
 type Client struct {
-	APIurl      *url.URL
-	APIToken    *APIToken
-	UserPass    *UserPass
+	APIurl   url.URL
+	APIToken *APIToken
+	// UserPass    *UserPass
+	Ticket      *Ticket
 	TLSInsecure bool
 	HTTPClient  *http.Client
 }
 
 func (c *Client) doRequest(req *http.Request) ([]byte, error) {
-	if c.UserPass != nil {
-		req.Header.Set("CSRFPreventionToken", c.UserPass.Ticket.CSRFPreventionToken)
-		req.Header.Set("Cookie", "PVEAuthCookie="+c.UserPass.Ticket.Ticket)
+	if c.Ticket != nil {
+		req.Header.Set("CSRFPreventionToken", c.Ticket.CSRFPreventionToken)
+		req.Header.Set("Cookie", "PVEAuthCookie="+c.Ticket.Ticket)
 		req.Header.Set("Accept", "application/json")
 	}
 	if c.APIToken != nil {
@@ -88,7 +89,7 @@ func (c *Client) DeleteItem(item ItemDeleter, basePath, id string, digest string
 		return fmt.Errorf("Client.DeleteItem: item ID is required")
 	}
 
-	apiURL := *c.APIurl
+	apiURL := c.APIurl
 	apiURL.Path += basePath + "/" + id
 
 	params := url.Values{}
@@ -110,7 +111,7 @@ func (c Client) GetItem(g ItemGetter, basePath, id string) ([]byte, error) {
 		return nil, fmt.Errorf("Client.GetItem: item ID is required")
 	}
 
-	apiURL := *c.APIurl
+	apiURL := c.APIurl
 	apiURL.Path += basePath + "/" + id
 	return c.Get(&apiURL)
 }
@@ -125,7 +126,7 @@ func (c Client) PutItem(p ItemPutter, basePath, id string) ([]byte, error) {
 		return nil, fmt.Errorf("Client.PutItem: item ID is required")
 	}
 
-	apiURL := *c.APIurl
+	apiURL := c.APIurl
 	apiURL.Path += basePath + "/" + id
 	if err := p.ParseParams(&apiURL); err != nil {
 		return nil, err
@@ -139,7 +140,7 @@ type Poster interface {
 }
 
 func (c Client) PostItem(p Poster, basePath string) ([]byte, error) {
-	apiURL := *c.APIurl
+	apiURL := c.APIurl
 	apiURL.Path += basePath
 	if err := p.ParseParams(&apiURL); err != nil {
 		return nil, err
@@ -153,7 +154,7 @@ type Getter interface {
 }
 
 func (c Client) GetAll(g Getter, basePath string) ([]byte, error) {
-	apiURL := *c.APIurl
+	apiURL := c.APIurl
 	apiURL.Path += basePath
 	if err := g.ParseParams(&apiURL); err != nil {
 		return nil, err
