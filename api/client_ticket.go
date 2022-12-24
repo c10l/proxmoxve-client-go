@@ -94,7 +94,6 @@ func getTicket(apiURL *url.URL, formData url.Values, httpClient *http.Client) (*
 		return nil, err
 	}
 	if ticketResp.StatusCode != http.StatusOK {
-		fmt.Print("salsifufu")
 		return nil, fmt.Errorf("%s: %s", ticketResp.Status, ticketBody)
 	}
 	ticketRaw, err := parseData(ticketBody)
