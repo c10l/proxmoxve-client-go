@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 )
 
 type Client struct {
@@ -84,7 +86,12 @@ type ItemDeleter interface {
 	Delete() error
 }
 
-func (c *Client) DeleteItem(item ItemDeleter, basePath, id string, digest string) error {
+type URLParam struct {
+	Key   string
+	Value types.PVEAPIType
+}
+
+func (c *Client) DeleteItem(item ItemDeleter, basePath, id string, digest string, extraParams ...URLParam) error {
 	if id == "" {
 		return fmt.Errorf("Client.DeleteItem: item ID is required")
 	}
@@ -96,6 +103,11 @@ func (c *Client) DeleteItem(item ItemDeleter, basePath, id string, digest string
 	if digest != "" {
 		params.Add("digest", digest)
 	}
+
+	for _, param := range extraParams {
+		params.Add(param.Key, param.Value.ToAPIRequestParam())
+	}
+
 	apiURL.RawQuery = params.Encode()
 
 	_, err := c.Delete(&apiURL)
