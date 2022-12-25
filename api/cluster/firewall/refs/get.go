@@ -12,9 +12,7 @@ type GetRequest struct {
 	Client *api.Client
 }
 
-type GetResponse []GetResponseRef
-
-type GetResponseRef struct {
+type GetResponse []struct {
 	Name    string `json:"name"`
 	Ref     string `json:"ref"`
 	Type    string `json:"type"`

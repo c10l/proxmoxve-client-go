@@ -11,16 +11,16 @@ type GetRequest struct {
 	Client *api.Client
 }
 
-type GetResponseAccount struct {
+type GetResponse []struct {
 	Name string `json:"name"`
 }
 
-func (g GetRequest) Get() ([]GetResponseAccount, error) {
+func (g GetRequest) Get() (GetResponse, error) {
 	items, err := g.GetAll()
 	if err != nil {
 		return nil, err
 	}
-	var s []GetResponseAccount
+	var s GetResponse
 	return s, json.Unmarshal(items, &s)
 }
 

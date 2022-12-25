@@ -15,7 +15,7 @@ type GetRequest struct {
 	Type   string
 }
 
-type GetResponseStorage struct {
+type GetResponse struct {
 	Content      []string
 	Digest       string
 	Path         string
@@ -25,7 +25,7 @@ type GetResponseStorage struct {
 	Type         string
 }
 
-func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
+func (r *GetResponse) UnmarshalJSON(b []byte) error {
 	var helper struct {
 		Content      json.RawMessage `json:"content"`
 		Digest       string          `json:"digest"`
@@ -53,12 +53,12 @@ func (r *GetResponseStorage) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (g GetRequest) Get() ([]GetResponseStorage, error) {
+func (g GetRequest) Get() ([]GetResponse, error) {
 	items, err := g.GetAll()
 	if err != nil {
 		return nil, err
 	}
-	var resp []GetResponseStorage
+	var resp []GetResponse
 	return resp, json.Unmarshal(items, &resp)
 }
 

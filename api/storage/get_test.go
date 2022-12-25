@@ -30,7 +30,7 @@ func TestUnmarshalGetResponseStorageList(t *testing.T) {
 			"type": "dir"
 		}
 	]`)
-	var storageList []GetResponseStorage
+	var storageList []GetResponse
 	err := json.Unmarshal(storageListJSON, &storageList)
 	assert.NoError(t, err)
 	assert.Equal(t, "local", (storageList)[0].Storage)
@@ -51,7 +51,7 @@ func TestUnmarshalGetResponseStorage(t *testing.T) {
       "type": "dir"
     }`, ContentImages, ContentISO, expectedStorage))
 
-	storage := new(GetResponseStorage)
+	storage := new(GetResponse)
 	err := json.Unmarshal(storageJSON, storage)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedStorage, storage.Storage)

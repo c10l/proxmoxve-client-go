@@ -12,7 +12,7 @@ type GetRequest struct {
 	IPSetName string
 }
 
-type GetResponse []*struct {
+type GetResponse []struct {
 	CIDR    string  `json:"cidr"`
 	Digest  string  `json:"digest"`
 	Comment *string `json:"comment,omitempty"`

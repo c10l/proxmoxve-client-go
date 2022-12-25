@@ -11,18 +11,18 @@ type GetRequest struct {
 	Client *api.Client
 }
 
-type GetResponsePlugins struct {
+type GetResponse struct {
 	Name    string `json:"name"`
 	Digest  string `json:"digest"`
 	Comment string `json:"comment"`
 }
 
-func (g GetRequest) Get() ([]GetResponsePlugins, error) {
+func (g GetRequest) Get() ([]GetResponse, error) {
 	items, err := g.GetAll()
 	if err != nil {
 		return nil, err
 	}
-	var s []GetResponsePlugins
+	var s []GetResponse
 	return s, json.Unmarshal(items, &s)
 }
 

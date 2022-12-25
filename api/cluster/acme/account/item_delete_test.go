@@ -31,6 +31,10 @@ func TestItemDelete(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Eventually(t, func() bool {
 		_, err = ItemGetRequest{Client: helpers.TicketTestClient(), Name: req.Name}.Get()
-		return strings.Contains(err.Error(), fmt.Sprintf("ACME account config file '%s' does not exist.", req.Name))
+		var error string
+		if err != nil {
+			error = err.Error()
+		}
+		return strings.Contains(error, fmt.Sprintf("ACME account config file '%s' does not exist.", req.Name))
 	}, testEventuallyTimeout, 500*time.Millisecond)
 }

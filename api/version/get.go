@@ -12,6 +12,13 @@ type GetRequest struct {
 	Client *api.Client
 }
 
+type GetResponse struct {
+	Release string             `json:"release"`
+	RepoID  string             `json:"repoid"`
+	Version string             `json:"version"`
+	Console GetResponseConsole `json:"console,omitempty"`
+}
+
 type GetResponseConsole string
 
 const (
@@ -20,13 +27,6 @@ const (
 	GetResponseConsoleHTML5   GetResponseConsole = "html5"
 	GetResponseConsoleXtermJS GetResponseConsole = "xtermjs"
 )
-
-type GetResponse struct {
-	Release string `json:"release"`
-	RepoID  string `json:"repoid"`
-	Version string `json:"version"`
-	Console string `json:"console,omitempty"`
-}
 
 func (g GetRequest) Do() (*GetResponse, error) {
 	var v GetResponse
