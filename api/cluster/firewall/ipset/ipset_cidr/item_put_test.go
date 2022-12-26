@@ -42,4 +42,5 @@ func TestItemPutComment(t *testing.T) {
 	item, err := ItemGetRequest{Client: helpers.APITokenTestClient(), IPSetName: postReq.IPSetName, CIDR: postReq.CIDR}.Get()
 	assert.NoError(t, err)
 	assert.Equal(t, req.Comment, item.Comment)
+	assert.Equal(t, req.NoMatch, item.NoMatch)
 }

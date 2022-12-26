@@ -5,6 +5,7 @@ import (
 
 	"github.com/c10l/proxmoxve-client-go/api/cluster/firewall/ipset"
 	"github.com/c10l/proxmoxve-client-go/helpers"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
@@ -23,6 +24,7 @@ func TestPost(t *testing.T) {
 		IPSetName: ipSetReq.Name,
 		CIDR:      "192.168.0.0/16",
 		Comment:   helpers.PtrTo("foobar"),
+		NoMatch:   helpers.PtrTo(types.PVEBool(true)),
 	}
 	err = ipSetCIDRReq.Post()
 	assert.NoError(t, err)
@@ -33,4 +35,5 @@ func TestPost(t *testing.T) {
 	assert.Len(t, ipSetCIDR, 1)
 	assert.Equal(t, ipSetCIDRReq.CIDR, ipSetCIDR[0].CIDR)
 	assert.Equal(t, ipSetCIDRReq.Comment, ipSetCIDR[0].Comment)
+	assert.Equal(t, ipSetCIDRReq.NoMatch, ipSetCIDR[0].NoMatch)
 }

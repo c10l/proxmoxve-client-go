@@ -2,9 +2,9 @@ package ipset_cidr
 
 import (
 	"net/url"
-	"strconv"
 
 	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 )
 
 type PostRequest struct {
@@ -16,7 +16,7 @@ type PostRequest struct {
 
 	// Optional fields
 	Comment *string
-	NoMatch *bool
+	NoMatch *types.PVEBool
 }
 
 func (p PostRequest) Post() error {
@@ -39,7 +39,7 @@ func (p PostRequest) ParseParams(apiURL *url.URL) error {
 		params.Add("comment", string(*p.Comment))
 	}
 	if p.NoMatch != nil {
-		params.Add("nomatch", strconv.FormatBool(*p.NoMatch))
+		params.Add("nomatch", p.NoMatch.ToAPIRequestParam())
 	}
 	apiURL.RawQuery = params.Encode()
 	return nil

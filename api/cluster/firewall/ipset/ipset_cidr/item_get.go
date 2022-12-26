@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 )
 
 type ItemGetRequest struct {
@@ -13,9 +14,10 @@ type ItemGetRequest struct {
 }
 
 type ItemGetResponse struct {
-	CIDR    string  `json:"cidr"`
-	Digest  string  `json:"digest"`
-	Comment *string `json:"comment,omitempty"`
+	CIDR    string         `json:"cidr"`
+	Digest  string         `json:"digest"`
+	Comment *string        `json:"comment,omitempty"`
+	NoMatch *types.PVEBool `json:"nomatch,omitempty"`
 }
 
 // GetItem satisfies the ItemGetter interface
