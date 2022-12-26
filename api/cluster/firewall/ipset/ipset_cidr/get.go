@@ -13,19 +13,30 @@ type GetRequest struct {
 	IPSetName string
 }
 
-type GetResponse []struct {
+type GetResponseList []GetResponse
+
+type GetResponse struct {
 	CIDR    string         `json:"cidr"`
 	Digest  string         `json:"digest"`
 	Comment *string        `json:"comment,omitempty"`
 	NoMatch *types.PVEBool `json:"nomatch,omitempty"`
 }
 
-func (g GetRequest) Get() (GetResponse, error) {
+func (l *GetResponseList) FindByCIDR(cidr string) *GetResponse {
+	for _, i := range *l {
+		if i.CIDR == cidr {
+			return &i
+		}
+	}
+	return nil
+}
+
+func (g GetRequest) Get() (GetResponseList, error) {
 	items, err := g.GetAll()
 	if err != nil {
 		return nil, err
 	}
-	var s GetResponse
+	var s GetResponseList
 	return s, json.Unmarshal(items, &s)
 }
 

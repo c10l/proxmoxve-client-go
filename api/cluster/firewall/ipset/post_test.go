@@ -2,7 +2,6 @@ package ipset
 
 import (
 	"testing"
-	"time"
 
 	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
@@ -18,15 +17,9 @@ func TestPost(t *testing.T) {
 	err := req.Post()
 	assert.NoError(t, err)
 
-	assert.Eventually(t, func() bool {
-		ipsetList, err := GetRequest{Client: helpers.APITokenTestClient()}.Get()
-		for _, i := range ipsetList {
-			if i.Name == req.Name {
-				assert.NoError(t, err)
-				assert.NotNil(t, ipsetList)
-				return true
-			}
-		}
-		return false
-	}, testEventuallyTimeout, 500*time.Millisecond, err)
+	ipsetList, err := GetRequest{Client: helpers.APITokenTestClient()}.Get()
+	assert.NoError(t, err)
+	assert.NotNil(t, ipsetList)
+	ipSet := ipsetList.FindByName(req.Name)
+	assert.NotNil(t, ipSet)
 }

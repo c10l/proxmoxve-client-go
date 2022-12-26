@@ -12,28 +12,29 @@ import (
 
 func TestPost(t *testing.T) {
 	client := helpers.APITokenTestClient()
-	ipSetReq := ipset.PostRequest{
-		Client: client,
-		Name:   testNamePrefix + rand.String(10),
-	}
-	err := ipSetReq.Post()
-	assert.NoError(t, err)
+	ipSetName := testNamePrefix + rand.String(10)
 
-	ipSetCIDRReq := PostRequest{
+	assert.NoError(t, ipset.PostRequest{
+		Client: client,
+		Name:   ipSetName,
+	}.Post())
+
+	req := PostRequest{
 		Client:    client,
-		IPSetName: ipSetReq.Name,
+		IPSetName: ipSetName,
 		CIDR:      "192.168.0.0/16",
 		Comment:   helpers.PtrTo("foobar"),
 		NoMatch:   helpers.PtrTo(types.PVEBool(true)),
 	}
-	err = ipSetCIDRReq.Post()
-	assert.NoError(t, err)
+	assert.NoError(t, req.Post())
 
-	ipSetCIDR, err := GetRequest{Client: helpers.APITokenTestClient(), IPSetName: ipSetReq.Name}.Get()
+	ipSetCIDRList, err := GetRequest{Client: helpers.APITokenTestClient(), IPSetName: ipSetName}.Get()
 	assert.NoError(t, err)
-	assert.NotNil(t, ipSetCIDR)
-	assert.Len(t, ipSetCIDR, 1)
-	assert.Equal(t, ipSetCIDRReq.CIDR, ipSetCIDR[0].CIDR)
-	assert.Equal(t, ipSetCIDRReq.Comment, ipSetCIDR[0].Comment)
-	assert.Equal(t, ipSetCIDRReq.NoMatch, ipSetCIDR[0].NoMatch)
+	assert.NotNil(t, ipSetCIDRList)
+	assert.Len(t, ipSetCIDRList, 1)
+
+	ipSetCIDR := ipSetCIDRList.FindByCIDR(req.CIDR)
+	assert.Equal(t, req.CIDR, ipSetCIDR.CIDR)
+	assert.Equal(t, req.Comment, ipSetCIDR.Comment)
+	assert.Equal(t, req.NoMatch, ipSetCIDR.NoMatch)
 }

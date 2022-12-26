@@ -2,7 +2,6 @@ package ipset
 
 import (
 	"testing"
-	"time"
 
 	"github.com/c10l/proxmoxve-client-go/helpers"
 	"github.com/stretchr/testify/assert"
@@ -16,15 +15,11 @@ func TestItemDelete(t *testing.T) {
 	}
 	err := req.Post()
 	assert.NoError(t, err)
-	assert.Eventually(t, func() bool {
-		_, err = ItemGetRequest{Client: helpers.APITokenTestClient(), Name: req.Name}.Get()
-		return err == nil
-	}, testEventuallyTimeout, 500*time.Millisecond)
+	_, err = ItemGetRequest{Client: helpers.APITokenTestClient(), Name: req.Name}.Get()
+	assert.NoError(t, err)
 
 	err = ItemDeleteRequest{Client: helpers.APITokenTestClient(), Name: req.Name}.Delete()
 	assert.NoError(t, err)
-	assert.Eventually(t, func() bool {
-		_, err = ItemGetRequest{Client: helpers.APITokenTestClient(), Name: req.Name}.Get()
-		return assert.Contains(t, err.Error(), "no such IPSet")
-	}, testEventuallyTimeout, 500*time.Millisecond)
+	_, err = ItemGetRequest{Client: helpers.APITokenTestClient(), Name: req.Name}.Get()
+	assert.Contains(t, err.Error(), "no such IPSet")
 }
