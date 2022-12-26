@@ -3,9 +3,9 @@ package ipset_cidr
 import (
 	"fmt"
 	"net/url"
-	"strconv"
 
 	"github.com/c10l/proxmoxve-client-go/api"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 )
 
 type ItemPutRequest struct {
@@ -16,7 +16,7 @@ type ItemPutRequest struct {
 	// Optional arguments
 	Comment *string
 	Digest  *string
-	NoMatch *bool
+	NoMatch *types.PVEBool
 }
 
 // PutItem satisfies the ItemPutter interface.
@@ -42,7 +42,7 @@ func (g ItemPutRequest) ParseParams(apiURL *url.URL) error {
 		params.Add("digest", *g.Digest)
 	}
 	if g.NoMatch != nil {
-		params.Add("rename", strconv.FormatBool(*g.NoMatch))
+		params.Add("nomatch", g.NoMatch.ToAPIRequestParam())
 	}
 	if len(params) == 0 {
 		return fmt.Errorf("no params")

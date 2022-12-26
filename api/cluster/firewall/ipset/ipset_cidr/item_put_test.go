@@ -5,6 +5,7 @@ import (
 
 	"github.com/c10l/proxmoxve-client-go/api/cluster/firewall/ipset"
 	"github.com/c10l/proxmoxve-client-go/helpers"
+	"github.com/c10l/proxmoxve-client-go/helpers/types"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
@@ -33,6 +34,7 @@ func TestItemPutComment(t *testing.T) {
 		IPSetName: postReq.IPSetName,
 		CIDR:      postReq.CIDR,
 		Comment:   helpers.PtrTo(rand.String(30)),
+		NoMatch:   helpers.PtrTo(types.PVEBool(true)),
 	}
 	err = req.Put()
 	assert.NoError(t, err)
