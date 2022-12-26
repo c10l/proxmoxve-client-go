@@ -11,7 +11,11 @@ type ItemGetRequest struct {
 	Name   string
 }
 
-type ItemGetResponse []string
+type ItemGetResponse []struct {
+	CIDR    string  `json:"cidr"`
+	Digest  string  `json:"digest"`
+	Comment *string `json:"comment,omitempty"`
+}
 
 // GetItem satisfies the ItemGetter interface
 // Not to be used directly. Use Get() instead.
