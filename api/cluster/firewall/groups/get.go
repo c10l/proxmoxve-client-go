@@ -11,18 +11,20 @@ type GetRequest struct {
 	Client *api.Client
 }
 
-type GetResponse []struct {
+type GetResponseList []GetResponse
+
+type GetResponse struct {
 	Digest  string `json:"digest"`
 	Group   string `json:"group"`
 	Comment string `json:"comment,omitempty"`
 }
 
-func (g GetRequest) Get() (GetResponse, error) {
+func (g GetRequest) Get() (GetResponseList, error) {
 	items, err := g.GetAll()
 	if err != nil {
 		return nil, err
 	}
-	var s GetResponse
+	var s GetResponseList
 	return s, json.Unmarshal(items, &s)
 }
 
@@ -31,5 +33,14 @@ func (g GetRequest) GetAll() ([]byte, error) {
 }
 
 func (g GetRequest) ParseParams(apiURL *url.URL) error {
+	return nil
+}
+
+func (l *GetResponseList) FindByName(name string) *GetResponse {
+	for _, i := range *l {
+		if i.Group == name {
+			return &i
+		}
+	}
 	return nil
 }
