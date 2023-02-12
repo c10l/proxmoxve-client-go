@@ -14,9 +14,9 @@ type GetRequest struct {
 type GetResponseList []GetResponse
 
 type GetResponse struct {
-	Digest  string `json:"digest"`
-	Group   string `json:"group"`
-	Comment string `json:"comment,omitempty"`
+	Digest  string  `json:"digest"`
+	Group   string  `json:"group"`
+	Comment *string `json:"comment,omitempty"`
 }
 
 func (g GetRequest) Get() (GetResponseList, error) {
