@@ -14,6 +14,7 @@ type GetRequest struct {
 type GetResponseList []GetResponse
 
 type GetResponse struct {
+	Name    string  `json:"name"`
 	Digest  string  `json:"digest"`
 	Group   string  `json:"group"`
 	Comment *string `json:"comment,omitempty"`
